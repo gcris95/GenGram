@@ -155,46 +155,46 @@ public class Chromosome
 
         points = Mathf.Max(Mathf.Abs(dist - mean) - diff, 0);
 
-        fitness += Mathf.Pow(points, 2) * settings.distanceWeight;
+        float FLfitness = 1 / (points + 1);
 
         fitData.FirstLastDistancePoints = points;
         mapData.firstLastDistance = dist;
 
         #endregion
 
-        #region Rooms size
+        //#region Rooms size
 
-        mean = (settings.maxSize + settings.minSize) / 2;
-        diff = (settings.maxSize - mean);
+        //mean = (settings.maxSize + settings.minSize) / 2;
+        //diff = (settings.maxSize - mean);
 
-        float[] areas = new float[rooms.Length - 1];
+        //float[] areas = new float[rooms.Length - 1];
 
-        for (int i = 0; i < areas.Length; i++)
-            if (i != lastRoom)
-                areas[i] = rooms[i].area;
+        //for (int i = 0; i < areas.Length; i++)
+        //    if (i != lastRoom)
+        //        areas[i] = rooms[i].area;
 
-        float areaMean = calculateMean(areas);
-        float vIndex = calculateVariabilityIndex(areas, areaMean);
+        //float areaMean = calculateMean(areas);
+        //float vIndex = calculateVariabilityIndex(areas, areaMean);
 
-        points = Mathf.Max(Mathf.Abs(areaMean - mean) - diff, 0);
+        //points = Mathf.Max(Mathf.Abs(areaMean - mean) - diff, 0);
 
-        points = 0;
-        for (int i = 0; i < rooms.Length; i++)
-        {
-            points += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
-        }
+        //points = 0;
+        //for (int i = 0; i < rooms.Length; i++)
+        //{
+        //    points += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
+        //}
 
 
-        //if (vIndex > 0.1)
-        //    points += (vIndex - 0.1f) * 100;
+        ////if (vIndex > 0.1)
+        ////    points += (vIndex - 0.1f) * 100;
 
-        fitness += Mathf.Pow(points, 1) * settings.sizeWeight;
+        //fitness += Mathf.Pow(points, 1) * settings.sizeWeight;
 
-        fitData.roomSizePoints = points;
+        //fitData.roomSizePoints = points;
 
-        //Debug.Log("Points " + points + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
+        ////Debug.Log("Points " + points + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
 
-        #endregion
+        //#endregion
 
         #region Rooms number
 
@@ -203,7 +203,7 @@ public class Chromosome
 
         points = Mathf.Max(Mathf.Abs(rooms.Length - mean) - diff, 0);
 
-        fitness += Mathf.Pow(points, 2) * settings.roomNumberWeight;
+        float Numberfitness = 1 / (points + 1);
 
         fitData.roomNumberPoints = points;
         mapData.roomsNumber = rooms.Length;
@@ -213,7 +213,7 @@ public class Chromosome
         #endregion
 
 
-
+        fitness = Numberfitness;
 
 
 

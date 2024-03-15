@@ -35,13 +35,13 @@ public class Generator : MonoBehaviour
 
                 g.chromosome.calcFitness(g, settings, fitnessData, mapData);
 
-                if (bestGraph == null || g.chromosome.fitness < bestGraph.chromosome.fitness)
+                if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
                     bestGraph = g;
             }
           
             Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
 
-            if (testing || bestGraph.chromosome.fitness < settings.fitnessThreshold)
+            if (testing || bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
                 break;
 
             maps.newGeneration();

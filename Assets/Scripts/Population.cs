@@ -43,7 +43,7 @@ public class Population
             for (int j = 0; j < tournamentSize; j++)
             {
                 index = rnd.Next(populationCopy.Count);
-                if (winner == null || populationCopy[index].fitness < winner.fitness)
+                if (winner == null || populationCopy[index].fitness > winner.fitness)
                     winner = populationCopy[index];
                 populationCopy.RemoveAt(index);
             }
@@ -52,10 +52,10 @@ public class Population
             winner = null;
         }
 
-        for(int i = 0; i < matingPool.Length; i++)
-        {
-            Debug.Log("Selection: " + string.Join(", ", matingPool[i].genes));
-        }
+        //for(int i = 0; i < matingPool.Length; i++)
+        //{
+        //    Debug.Log("Selection: " + string.Join(", ", matingPool[i].genes));
+        //}
     }
 
     public void crossover()
@@ -82,8 +82,8 @@ public class Population
     {
         Array.Sort(population, delegate (Chromosome x, Chromosome y) { return x.fitness.CompareTo(y.fitness); });
 
-        for (int i = 0; i < population.Length; ++i)
-            Debug.Log("Cromosomi dopo ordinamento: " + string.Join(", ", population[i].fitness));
+        //for (int i = 0; i < population.Length; ++i)
+        //    Debug.Log("Cromosomi dopo ordinamento: " + string.Join(", ", population[i].fitness));
 
     }
 }
