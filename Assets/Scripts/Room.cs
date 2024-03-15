@@ -365,6 +365,7 @@ public class Room
             vertices[i] = new Vector2(vertices[i].x + (x * shiftAmount), vertices[i].y + (y * shiftAmount));
 
         calcPivot();
+        calcArea();
     }
 
     public void simplify()
@@ -505,29 +506,18 @@ public class Room
         quads.Insert(quadIndex, newQ);
     }
 
-    public void show(float shiftAmount)
+    public void show(float shiftAmount, Graph g)
     {
         GameObject room = new GameObject("Room " + id);
         RoomMono r = room.AddComponent<RoomMono>();
 
         r.id = id;
-        if (right != null)
-            r.idRight = right.id;
-        else r.idRight = -1;
+        r.width = width;
+        r.height= height;
+        r.hwRatio = height/width;
 
-        if (up != null)
-            r.idUp = up.id;
-        else r.idUp = -1;
-
-        if (down != null)
-            r.idDown = down.id;
-        else r.idDown = -1;
-
-        if (left != null)
-            r.idLeft = left.id;
-        else r.idLeft = -1;
-
-        r.x = x; r.y = y;
+        r.connections = g.getConnections(id).Count;
+        r.area = area;
 
         Vector2 shift = new Vector2((x * shiftAmount), (y * shiftAmount));
         foreach (Quad q in quads)

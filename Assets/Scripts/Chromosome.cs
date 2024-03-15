@@ -141,7 +141,7 @@ public class Chromosome
     {
         Room[] rooms = g.rooms;
 
-        float points = 0;
+        float malus = 0;
         float mean;
         float diff;
 
@@ -151,22 +151,23 @@ public class Chromosome
         diff = (settings.maxDistance - mean);
 
         int lastRoom = g.findLast(mean);
-        int dist = g.distances[lastRoom];
+        int dist = lastRoom == 0 ? settings.maxDistance * 10 : g.distances[lastRoom];
 
-        points = Mathf.Max(Mathf.Abs(dist - mean) - diff, 0);
+        malus = Mathf.Max(Mathf.Abs(dist - mean) - diff, 0);
 
-        float FLfitness = 1 / (points + 1);
+        float FLfitness = 1 / (malus + 1);
 
-        fitData.FirstLastDistancePoints = points;
+        fitData.FirstLastDistancePoints = malus;
         mapData.firstLastDistance = dist;
 
         #endregion
 
-        //#region Rooms size
+        #region Rooms size
 
-        //mean = (settings.maxSize + settings.minSize) / 2;
-        //diff = (settings.maxSize - mean);
+        mean = (settings.maxSize + settings.minSize) / 2;
+        diff = (settings.maxSize - mean);
 
+        #region mean method
         //float[] areas = new float[rooms.Length - 1];
 
         //for (int i = 0; i < areas.Length; i++)
@@ -176,75 +177,81 @@ public class Chromosome
         //float areaMean = calculateMean(areas);
         //float vIndex = calculateVariabilityIndex(areas, areaMean);
 
+        //if (vIndex > 0.1)
+        //    points += (vIndex - 0.1f) * 100;
         //points = Mathf.Max(Mathf.Abs(areaMean - mean) - diff, 0);
+        #endregion
 
-        //points = 0;
-        //for (int i = 0; i < rooms.Length; i++)
-        //{
-        //    points += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
-        //}
+        malus = 0;
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            malus += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
+        }
 
+        malus /= rooms.Length;
 
-        ////if (vIndex > 0.1)
-        ////    points += (vIndex - 0.1f) * 100;
+        float Sizefitness = 1 / (malus + 1);
 
-        //fitness += Mathf.Pow(points, 1) * settings.sizeWeight;
+        fitData.roomSizePoints = malus;
 
-        //fitData.roomSizePoints = points;
+        //Debug.Log("Points " + points + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
 
-        ////Debug.Log("Points " + points + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
-
-        //#endregion
+        #endregion
 
         #region Rooms number
 
         mean = (settings.maxRooms + settings.minRooms) / 2;
         diff = (settings.maxRooms - mean);
 
-        points = Mathf.Max(Mathf.Abs(rooms.Length - mean) - diff, 0);
+        malus = Mathf.Max(Mathf.Abs(rooms.Length - mean) - diff, 0);
 
-        float Numberfitness = 1 / (points + 1);
+        float Numberfitness = 1 / (malus + 1);
 
-        fitData.roomNumberPoints = points;
+        fitData.roomNumberPoints = malus;
         mapData.roomsNumber = rooms.Length;
 
-        Debug.Log("Points " + points + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
+        Debug.Log("Points " + malus + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
 
         #endregion
 
+        #region Height/Width ratio         
 
-        fitness = Numberfitness;
+        malus = 0;
+        foreach (Room room in rooms)
+            malus += Mathf.Abs(room.height / room.width - settings.hwRatio);
 
+        float HWfitness = 1 / (malus + 1);
 
+        fitData.HeightWidthPoints = malus;
 
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        Debug.Log("Best1: " + Numberfitness);
+        Debug.Log("Best2: " + FLfitness);
+        Debug.Log("Best3: " + Sizefitness);
+        Debug.Log("Best4: " + HWfitness);
+        fitness = (Numberfitness + FLfitness + Sizefitness + HWfitness);
 
 
 
-        //#region Height/Width ratio         
 
-        //points = 0;
-        //foreach (Room room in rooms)
-        //    points += Mathf.Abs(room.height / room.width - settings.hwRatio);
 
-        //antiFitness += Mathf.Pow(points, 1.3f) * settings.hwRatioWeight;
 
-        //fitData.HeightWidthPoints = points;
 
-        //#endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -310,7 +317,7 @@ public class Chromosome
         //Distanza di Hausdolff oppure Turning function?
         //antiFitness += points * settings.varianceWeight;
 
-        fitData.ShapeVariancePoints = points;
+        fitData.ShapeVariancePoints = malus;
         mapData.shapeVariance = 0; // TODO
         #endregion
 

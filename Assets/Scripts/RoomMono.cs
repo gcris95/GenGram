@@ -5,10 +5,10 @@ using UnityEngine;
 public class RoomMono : MonoBehaviour
 {
     public int id;
-    public int idUp;
-    public int idRight;
-    public int idDown;
-    public int idLeft;
-    public int x, y;
+    public float height;
+    public float width;
+    public float hwRatio;
+    public int connections;
+    public float area;
 
 }

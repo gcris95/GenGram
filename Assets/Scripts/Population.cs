@@ -52,10 +52,12 @@ public class Population
             winner = null;
         }
 
-        //for(int i = 0; i < matingPool.Length; i++)
-        //{
-        //    Debug.Log("Selection: " + string.Join(", ", matingPool[i].genes));
-        //}
+        Debug.Log("---------------------------------------SELECTION---------------------------------------");
+
+        for (int i = 0; i < matingPool.Length; i++)
+        {
+            Debug.Log("Selection: " + string.Join(", ", matingPool[i].genes));
+        }
     }
 
     public void crossover()

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: GenSettings
   m_EditorClassIdentifier: 
   fitnessThreshold: 0.1
-  rulesNumber: 200
-  populationSize: 20
-  tournamentSize: 5
+  rulesNumber: 250
+  populationSize: 10
+  tournamentSize: 4
   mutationRate: 0.1
   elitism: 0
-  maxGenerations: 1000
+  maxGenerations: 300
   quadSize: 4
   sizeWeight: 0.25
   finalSizeWeight: 0.125
@@ -28,14 +28,14 @@ MonoBehaviour:
   extraRoomWeight: 0.125
   distanceWeight: 0.25
   varianceWeight: 0.125
-  minRooms: 14
-  maxRooms: 18
+  minRooms: 26
+  maxRooms: 28
   minSize: 60
   maxSize: 100
   finalRoomSize: 150
   hwRatio: 3
   minExtraRooms: 0
   maxExtraRooms: 0
-  minDistance: 0
-  maxDistance: 0
+  minDistance: 6
+  maxDistance: 6
   connections: 2

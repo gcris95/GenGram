@@ -13,6 +13,7 @@ public class Graph
 
     public MapData mapData;
     public FitnessData fitnessData;
+    public int lastRoomId;
 
     public Graph(Room[] roomList, Chromosome c, float shiftAmount)
     {
@@ -174,18 +175,20 @@ public class Graph
     public int findLast(float preferredDistance)
     {
         float bestDiff = float.MaxValue;
-        int lastRoom = 0;
+        lastRoomId = 0;
+        int connections;
 
-        for (int i = 0; i < rooms.Length; i++)
+        for (int i = 1; i < rooms.Length; i++)
         {
-            if (getConnections(i).Count == 1 && Mathf.Abs(preferredDistance - distances[i]) < bestDiff)
+            connections = getConnections(i).Count;
+            if ((lastRoomId == 0 && connections == 1) || (connections == 1 && Mathf.Abs(preferredDistance - distances[i]) < bestDiff))
             {
-                lastRoom = i;
+                lastRoomId = i;
                 bestDiff = Mathf.Abs(preferredDistance - distances[i]);
             }
         }
 
-        return lastRoom;
+        return lastRoomId;
     }
 
     /// <summary>
