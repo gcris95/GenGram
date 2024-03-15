@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2814a924cf73c744af3528a0ad5030f, type: 3}
+  m_Name: GenSettings
+  m_EditorClassIdentifier: 
+  fitnessThreshold: 1
+  rulesNumber: 200
+  populationSize: 20
+  tournamentSize: 5
+  mutationRate: 0.1
+  elitism: 0
+  maxGenerations: 1000
+  quadSize: 4
+  sizeWeight: 0.25
+  finalSizeWeight: 0.125
+  roomNumberWeight: 0.25
+  hwRatioWeight: 0.25
+  connectionWeight: 0.125
+  extraRoomWeight: 0.125
+  distanceWeight: 0.25
+  varianceWeight: 0.125
+  minRooms: 14
+  maxRooms: 18
+  minSize: 60
+  maxSize: 100
+  finalRoomSize: 150
+  hwRatio: 3
+  minExtraRooms: 0
+  maxExtraRooms: 0
+  minDistance: 0
+  maxDistance: 0
+  connections: 2
