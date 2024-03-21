@@ -30,8 +30,8 @@ MonoBehaviour:
   varianceWeight: 0.125
   minRooms: 26
   maxRooms: 28
-  minSize: 60
-  maxSize: 100
+  minSize: 115
+  maxSize: 135
   finalRoomSize: 150
   hwRatio: 3
   minExtraRooms: 0

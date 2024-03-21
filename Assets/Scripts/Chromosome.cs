@@ -155,7 +155,7 @@ public class Chromosome
 
         malus = Mathf.Max(Mathf.Abs(dist - mean) - diff, 0);
 
-        float FLfitness = 1 / (malus + 1);
+        float distanceFitness = 1 / (malus + 1);
 
         fitData.FirstLastDistancePoints = malus;
         mapData.firstLastDistance = dist;
@@ -184,13 +184,13 @@ public class Chromosome
 
         malus = 0;
         for (int i = 0; i < rooms.Length; i++)
-        {
-            malus += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
-        }
+            if (i != lastRoom)
+                malus += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
 
-        malus /= rooms.Length;
 
-        float Sizefitness = 1 / (malus + 1);
+        malus /= (rooms.Length - 1);
+
+        float sizeFitness = 1 / (malus + 1);
 
         fitData.roomSizePoints = malus;
 
@@ -205,7 +205,7 @@ public class Chromosome
 
         malus = Mathf.Max(Mathf.Abs(rooms.Length - mean) - diff, 0);
 
-        float Numberfitness = 1 / (malus + 1);
+        float roomsFitness = 1 / (malus + 1);
 
         fitData.roomNumberPoints = malus;
         mapData.roomsNumber = rooms.Length;
@@ -220,83 +220,41 @@ public class Chromosome
         foreach (Room room in rooms)
             malus += Mathf.Abs(room.height / room.width - settings.hwRatio);
 
-        float HWfitness = 1 / (malus + 1);
+        malus /= rooms.Length;
+
+        float hwFitness = 1 / (malus + 1);
 
         fitData.HeightWidthPoints = malus;
 
         #endregion
 
-        Debug.Log("Best1: " + Numberfitness);
-        Debug.Log("Best2: " + FLfitness);
-        Debug.Log("Best3: " + Sizefitness);
-        Debug.Log("Best4: " + HWfitness);
-        fitness = (Numberfitness + FLfitness + Sizefitness + HWfitness);
+        #region Final room size
 
+        malus = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
 
+        float finalRoomFitness = 1 / (malus + 1);
 
+        fitData.FinalRoomSizePoints = finalRoomFitness;
 
+        #endregion
 
+        #region Connection per room (MODIFICARE?)
 
+        malus = 0;
 
+        for (int i = 0; i < rooms.Length; i++)
+            malus += g.getConnections(i).Count;
 
+        malus = Mathf.Abs((malus / rooms.Length) - settings.connections);
 
+        float connectionFitness = 1 / (malus + 1);
 
+        fitData.ConnectionPerRoomPoints = connectionFitness;
 
+        #endregion
 
+        fitness = (roomsFitness + distanceFitness + sizeFitness + hwFitness + connectionFitness + finalRoomFitness) / 6;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //#region Final room size
-
-        //points = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
-
-        //antiFitness += Mathf.Pow(points, 1.3f) * settings.finalSizeWeight;
-
-        //fitData.FinalRoomSizePoints = points;
-
-        //#endregion
-
-        //#region Connection per room
-
-        //points = 0;
-
-        //for (int i = 0; i < rooms.Length; i++)
-        //    points += g.getConnections(i).Count;
-
-        //points = Mathf.Abs((points / rooms.Length) - settings.connections);
-
-        //antiFitness += points * settings.connectionWeight;
-
-        //fitData.ConnectionPerRoomPoints = points;
-
-        //#endregion
 
         //#region Extra room number
 
