@@ -14,14 +14,31 @@ public class Graph
     public MapData mapData;
     public FitnessData fitnessData;
     public int lastRoomId;
+    public int minX, minY, maxX, maxY;
 
-    public Graph(Room[] roomList, Chromosome c, float shiftAmount)
+    public float roomsFitness;
+    public float distanceFitness;
+    public float sizeFitness;
+    public float hwFitness;
+    public float connectionFitness;
+    public float rows;
+    public float cols;
+    public float roomPerRow;
+    public float roomPerCol;
+    public float ratio;
+    public float malus;    
+
+    public Graph(Room[] roomList, Chromosome c, float shiftAmount, int minX, int maxX, int minY, int maxY)
     {
         this.shiftAmount = shiftAmount;
         rooms = new Room[roomList.Length];
         matrix = new bool[roomList.Length][];
         mst = new bool[roomList.Length][];
         distances = new int[roomList.Length];
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
 
         chromosome = c;
 
@@ -37,6 +54,7 @@ public class Graph
         mstPrim();
         addExtraEdges();
         calcDistances();
+
     }
 
     /// <summary>

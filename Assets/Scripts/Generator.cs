@@ -29,6 +29,8 @@ public class Generator : MonoBehaviour
 
         do
         {
+            bestGraph = null;
+
             for (int i = 0; i < maps.population.Length; i++)
             {
                 g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
@@ -41,7 +43,7 @@ public class Generator : MonoBehaviour
 
             Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
 
-            if (testing || bestGraph.chromosome.fitness > 4 - settings.fitnessThreshold)
+            if (testing || bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
                 break;
 
             maps.newGeneration();
@@ -54,13 +56,29 @@ public class Generator : MonoBehaviour
         //for (int i = 0; i < bestGraph.rooms.Length; i++)
         //    Debug.Log(string.Join(", ", bestGraph.matrix[i]));
 
-        Debug.Log("Best last: " + bestGraph.lastRoomId);
-        Debug.Log("Best lastconnection: " + bestGraph.getConnections(bestGraph.lastRoomId).Count);
+        //Debug.Log("Best last: " + bestGraph.lastRoomId);
+        //Debug.Log("Best lastconnection: " + bestGraph.getConnections(bestGraph.lastRoomId).Count);
 
         foreach (Room r in bestGraph.rooms)
             r.show(bestGraph.shiftAmount, bestGraph);
 
         time = Time.time - time;
+
+        Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
+        Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
+        Debug.Log("Punteggio size: " + bestGraph.sizeFitness);
+        Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
+        Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
+        Debug.Log("minX: " + bestGraph.minX);
+        Debug.Log("maxX: " + bestGraph.maxX);
+        Debug.Log("minY: " + bestGraph.minY);
+        Debug.Log("maxY: " + bestGraph.maxY);
+        Debug.Log("ROW: " + bestGraph.rows);
+        Debug.Log("COLS: " + bestGraph.cols);
+        Debug.Log("ROOM PER ROW: " + bestGraph.roomPerRow);
+        Debug.Log("ROOM PER COL: " + bestGraph.roomPerCol);
+        Debug.Log("RATIO: " + bestGraph.ratio);
+        Debug.Log("malus connection: " + bestGraph.malus);
 
         DataLogger.log(settings, bestGraph, time, maps.generations);
     }

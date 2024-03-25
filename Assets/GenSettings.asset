@@ -12,26 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2814a924cf73c744af3528a0ad5030f, type: 3}
   m_Name: GenSettings
   m_EditorClassIdentifier: 
-  fitnessThreshold: 0.1
-  rulesNumber: 250
+  fitnessThreshold: 0.25
+  rulesNumber: 200
   populationSize: 10
   tournamentSize: 4
-  mutationRate: 0.1
+  mutationRate: 0.3
   elitism: 0
-  maxGenerations: 300
+  maxGenerations: 500
   quadSize: 4
-  sizeWeight: 0.25
+  sizeWeight: 0.2
   finalSizeWeight: 0.125
-  roomNumberWeight: 0.25
-  hwRatioWeight: 0.25
-  connectionWeight: 0.125
+  roomNumberWeight: 0.2
+  hwRatioWeight: 0.2
+  connectionWeight: 0.2
   extraRoomWeight: 0.125
-  distanceWeight: 0.25
+  distanceWeight: 0.2
   varianceWeight: 0.125
   minRooms: 26
   maxRooms: 28
-  minSize: 115
-  maxSize: 135
+  minSize: 112
+  maxSize: 144
   finalRoomSize: 150
   hwRatio: 3
   minExtraRooms: 0

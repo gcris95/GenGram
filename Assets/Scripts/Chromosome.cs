@@ -184,11 +184,13 @@ public class Chromosome
 
         malus = 0;
         for (int i = 0; i < rooms.Length; i++)
-            if (i != lastRoom)
-                malus += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
+        {
+            //if (i != lastRoom)
+            malus += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
+        }
 
 
-        malus /= (rooms.Length - 1);
+        malus /= (rooms.Length * 8);
 
         float sizeFitness = 1 / (malus + 1);
 
@@ -210,7 +212,7 @@ public class Chromosome
         fitData.roomNumberPoints = malus;
         mapData.roomsNumber = rooms.Length;
 
-        Debug.Log("Points " + malus + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
+        //Debug.Log("Points " + malus + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
 
         #endregion
 
@@ -228,24 +230,36 @@ public class Chromosome
 
         #endregion
 
-        #region Final room size
+        #region Connection per room
 
-        malus = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
+        //Rapporto #righe #colonne
 
-        float finalRoomFitness = 1 / (malus + 1);
+        // + 1 per considerare l'indice 0
+        float rows = g.maxY + Mathf.Abs(g.minY) + 1;
+        float cols = g.maxX + Mathf.Abs(g.minX) + 1;
 
-        fitData.FinalRoomSizePoints = finalRoomFitness;
+        float roomPerRow = rooms.Length / rows;
+        float roomPerCol = rooms.Length / cols;
 
-        #endregion
+        float ratio = rows > cols ? rows / cols : cols / rows;
 
-        #region Connection per room (MODIFICARE?)
+        // Considero il grado di pienezza delle righe, ovvero COLS, che è il numero massimo di stanze presenti per ogni riga, meno LA MEDIA DI STANZE PER RIGA
+        // Sommo 1 in modo che il risultato non possa essere 0 e peso per la grandezza del grafo, in modo che un grafo 2x10 pieno sia svantaggiato rispetto a un grafo 4x5 (prendo il rateo maggiore, quindi ad esempio 10/2 e non 2/10)
+        // Stessa cosa per la pienezza delle colonne
+        // Poichè il denominatore non può essere <1, non c'è bisogno di sommare 1 al denominatore nel calcolo della fitness, e il risultato ottimale per il malus sarà 1
+        //malus = (ratio * (cols - roomPerRow + 1)) + (ratio * (rows - roomPerCol + 1)) / 2;
 
-        malus = 0;
 
-        for (int i = 0; i < rooms.Length; i++)
-            malus += g.getConnections(i).Count;
+        malus = (Mathf.Max((cols * 3 / 4) - roomPerRow, 0) + Mathf.Max(((rows * 3 / 4) - roomPerCol), 0)) / 2;
+        malus = malus == 0 ? ratio : malus * ratio;
 
-        malus = Mathf.Abs((malus / rooms.Length) - settings.connections);
+
+        g.malus = malus;
+
+        //for (int i = 0; i < rooms.Length; i++)
+        //    malus += g.getConnections(i).Count;
+
+        //malus = Mathf.Abs((malus / rooms.Length) - settings.connections);
 
         float connectionFitness = 1 / (malus + 1);
 
@@ -253,8 +267,42 @@ public class Chromosome
 
         #endregion
 
-        fitness = (roomsFitness + distanceFitness + sizeFitness + hwFitness + connectionFitness + finalRoomFitness) / 6;
 
+
+
+
+
+
+
+
+        //#region Final room size
+
+        //malus = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
+
+        //float finalRoomFitness = 1 / (malus + 1);
+
+        //fitData.FinalRoomSizePoints = finalRoomFitness;
+
+        //#endregion        
+
+        g.roomsFitness = roomsFitness;
+        g.sizeFitness = sizeFitness;
+        g.distanceFitness = distanceFitness;
+        g.hwFitness = hwFitness;
+        g.connectionFitness = connectionFitness;
+        g.roomPerRow = roomPerRow;
+        g.roomPerCol = roomPerCol;
+        g.rows = rows;
+        g.cols = cols;
+        g.ratio = ratio;
+
+        roomsFitness *= /*settings.roomNumberWeight*/ 0.3f;
+        sizeFitness *= /*settings.sizeWeight*/ 0.3f;
+        distanceFitness *= /*settings.distanceWeight*/ 0.3f;
+        connectionFitness *= /*settings.connectionWeight*/ 0.1f;
+        hwFitness *= /*settings.hwRatioWeight*/ 0.2f;
+
+        fitness = roomsFitness + distanceFitness + sizeFitness + connectionFitness /*+ hwFitness*/;
 
         //#region Extra room number
 

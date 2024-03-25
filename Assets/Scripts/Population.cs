@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Population
 {
@@ -52,12 +54,12 @@ public class Population
             winner = null;
         }
 
-        Debug.Log("---------------------------------------SELECTION---------------------------------------");
+        //Debug.Log("---------------------------------------SELECTION---------------------------------------");
 
-        for (int i = 0; i < matingPool.Length; i++)
-        {
-            Debug.Log("Selection: " + string.Join(", ", matingPool[i].genes));
-        }
+        //for (int i = 0; i < matingPool.Length; i++)
+        //{
+        //    Debug.Log("Selection: " + string.Join(", ", matingPool[i].genes));
+        //}
     }
 
     public void crossover()

@@ -513,11 +513,12 @@ public class Room
 
         r.id = id;
         r.width = width;
-        r.height= height;
-        r.hwRatio = height/width;
+        r.height = height;
+        r.hwRatio = height / width;
 
         r.connections = g.getConnections(id).Count;
         r.area = area;
+        r.x = x; r.y = y;
 
         Vector2 shift = new Vector2((x * shiftAmount), (y * shiftAmount));
         foreach (Quad q in quads)

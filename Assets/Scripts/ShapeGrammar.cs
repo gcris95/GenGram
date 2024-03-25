@@ -10,6 +10,8 @@ public class ShapeGrammar
     private static int id = 1;
     private static int quadSize;
 
+    private static int minX = 0, maxX = 0, minY = 0, maxY = 0;
+
     public static Graph generate(Chromosome c, int qs)
     {
         quadSize = qs;
@@ -54,12 +56,16 @@ public class ShapeGrammar
             r.shiftRoom(shiftamount + 1);
 
 
-        Graph g = new Graph(list.ToArray(), c, shiftamount + 1);
+        Graph g = new Graph(list.ToArray(), c, shiftamount + 1, minX, maxX, minY, maxY);
 
         id = 1;
         list.Clear();
         index = 0;
 
+        minX = 0;
+        maxX = 0;
+        minY = 0;
+        maxY = 0;
         return g;
     }
 
@@ -77,27 +83,31 @@ public class ShapeGrammar
 
             last = parent.addUpNeighbour(newR);
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].y == last.y)
+            if (last.y > maxY)
+                maxY = last.y;
+            else
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i].x == last.x - 1)
+                    if (list[i].y == last.y)
                     {
-                        last.left = list[i];
-                        list[i].right = last;
+                        if (list[i].x == last.x - 1)
+                        {
+                            last.left = list[i];
+                            list[i].right = last;
+                        }
+                        else if (list[i].x == last.x + 1)
+                        {
+                            last.right = list[i];
+                            list[i].left = last;
+                        }
                     }
-                    else if (list[i].x == last.x + 1)
+                    else if (list[i].x == last.x && last.y == list[i].y - 1)
                     {
-                        last.right = list[i];
-                        list[i].left = last;
+                        last.up = list[i];
+                        list[i].down = last;
                     }
                 }
-                else if (list[i].x == last.x && last.y == list[i].y - 1)
-                {
-                    last.up = list[i];
-                    list[i].down = last;
-                }
-            }
+
         }
         else if (direction == 1)
         {
@@ -105,27 +115,31 @@ public class ShapeGrammar
 
             last = parent.addRightNeighbour(newR);
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].x == last.x)
+            if (last.x > maxX)
+                maxX = last.x;
+            else
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i].y == last.y - 1)
+                    if (list[i].x == last.x)
                     {
-                        last.down = list[i];
-                        list[i].up = last;
+                        if (list[i].y == last.y - 1)
+                        {
+                            last.down = list[i];
+                            list[i].up = last;
+                        }
+                        else if (list[i].y == last.y + 1)
+                        {
+                            last.up = list[i];
+                            list[i].down = last;
+                        }
                     }
-                    else if (list[i].y == last.y + 1)
+                    else if (list[i].y == last.y && last.x == list[i].x - 1)
                     {
-                        last.up = list[i];
-                        list[i].down = last;
+                        last.right = list[i];
+                        list[i].left = last;
                     }
                 }
-                else if (list[i].y == last.y && last.x == list[i].x - 1)
-                {
-                    last.right = list[i];
-                    list[i].left = last;
-                }
-            }
+
         }
         else if (direction == 2)
         {
@@ -133,27 +147,30 @@ public class ShapeGrammar
 
             last = parent.addDownNeighbour(newR);
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].y == last.y)
+            if (last.y < minY)
+                minY = last.y;
+            else
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i].x == last.x - 1)
+                    if (list[i].y == last.y)
                     {
-                        last.left = list[i];
-                        list[i].right = last;
+                        if (list[i].x == last.x - 1)
+                        {
+                            last.left = list[i];
+                            list[i].right = last;
+                        }
+                        else if (list[i].x == last.x + 1)
+                        {
+                            last.right = list[i];
+                            list[i].left = last;
+                        }
                     }
-                    else if (list[i].x == last.x + 1)
+                    else if (list[i].x == last.x && last.y == list[i].y + 1)
                     {
-                        last.right = list[i];
-                        list[i].left = last;
+                        last.down = list[i];
+                        list[i].up = last;
                     }
                 }
-                else if (list[i].x == last.x && last.y == list[i].y + 1)
-                {
-                    last.down = list[i];
-                    list[i].up = last;
-                }
-            }
         }
         else
         {
@@ -161,27 +178,30 @@ public class ShapeGrammar
 
             last = parent.addLeftNeighbour(newR);
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].x == last.x)
+            if (last.x < minX)
+                minX = last.x;
+            else
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i].y == last.y - 1)
+                    if (list[i].x == last.x)
                     {
-                        last.down = list[i];
-                        list[i].up = last;
+                        if (list[i].y == last.y - 1)
+                        {
+                            last.down = list[i];
+                            list[i].up = last;
+                        }
+                        else if (list[i].y == last.y + 1)
+                        {
+                            last.up = list[i];
+                            list[i].down = last;
+                        }
                     }
-                    else if (list[i].y == last.y + 1)
+                    else if (list[i].y == last.y && last.x == list[i].x + 1)
                     {
-                        last.up = list[i];
-                        list[i].down = last;
+                        last.left = list[i];
+                        list[i].right = last;
                     }
                 }
-                else if (list[i].y == last.y && last.x == list[i].x + 1)
-                {
-                    last.left = list[i];
-                    list[i].right = last;
-                }
-            }
         }
 
         list.Insert(index, newR);

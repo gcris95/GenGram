@@ -11,4 +11,7 @@ public class RoomMono : MonoBehaviour
     public int connections;
     public float area;
 
+    public int x;
+    public int y;
+
 }
