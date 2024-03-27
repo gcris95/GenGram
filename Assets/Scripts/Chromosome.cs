@@ -190,7 +190,7 @@ public class Chromosome
         }
 
 
-        malus /= (rooms.Length * 8);
+        malus /= (rooms.Length);
 
         float sizeFitness = 1 / (malus + 1);
 
@@ -250,7 +250,7 @@ public class Chromosome
         //malus = (ratio * (cols - roomPerRow + 1)) + (ratio * (rows - roomPerCol + 1)) / 2;
 
 
-        malus = (Mathf.Max((cols * 3 / 4) - roomPerRow, 0) + Mathf.Max(((rows * 3 / 4) - roomPerCol), 0)) / 2;
+        malus = (Mathf.Max((cols * 3 / 5) - roomPerRow, 0) + Mathf.Max(((rows * 3 / 5) - roomPerCol), 0)) / 2;
         malus = malus == 0 ? ratio : malus * ratio;
 
 
@@ -266,13 +266,6 @@ public class Chromosome
         fitData.ConnectionPerRoomPoints = connectionFitness;
 
         #endregion
-
-
-
-
-
-
-
 
 
         //#region Final room size
@@ -296,10 +289,10 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        roomsFitness *= /*settings.roomNumberWeight*/ 0.3f;
-        sizeFitness *= /*settings.sizeWeight*/ 0.3f;
-        distanceFitness *= /*settings.distanceWeight*/ 0.3f;
-        connectionFitness *= /*settings.connectionWeight*/ 0.1f;
+        roomsFitness *= /*settings.roomNumberWeight*/ 0.25f;
+        sizeFitness *= /*settings.sizeWeight*/ 0.25f;
+        distanceFitness *= /*settings.distanceWeight*/ 0.25f;
+        connectionFitness *= /*settings.connectionWeight*/ 0.25f;
         hwFitness *= /*settings.hwRatioWeight*/ 0.2f;
 
         fitness = roomsFitness + distanceFitness + sizeFitness + connectionFitness /*+ hwFitness*/;

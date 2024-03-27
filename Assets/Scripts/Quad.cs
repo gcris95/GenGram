@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Quad
 {
     public int x, y;
     public int size;
-    Vector2 pivot = new Vector2(0, 0);
+    public Vector2 pivot = new Vector2(0, 0);
 
     public Quad up, right, down, left;
 
@@ -50,6 +51,11 @@ public class Quad
         go.transform.position = pivot;
         go.transform.localScale = Vector2.one * size;
         go.transform.parent = room.transform;
+
+        QuadMono qm = go.AddComponent<QuadMono>();
+
+        qm.x = x;
+        qm.y = y;
     }
 
     public Quad addUpNeighbour(Quad newQ)
@@ -187,4 +193,9 @@ public class Quad
 
         return lastQuad;
     }
+}
+
+public class QuadMono : MonoBehaviour
+{
+    public int x, y;
 }

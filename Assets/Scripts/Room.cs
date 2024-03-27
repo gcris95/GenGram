@@ -11,6 +11,7 @@ public class Room
     // Quads of the room
     public List<Quad> quads = new List<Quad>(1);
     public int quadIndex = 0;
+    public Quad center;
 
     // Room Neighbours
     public bool hasUp, hasDown, hasLeft, hasRight;
@@ -24,6 +25,11 @@ public class Room
     public float area;
     public float height, width;
     public List<Vector2> vertices = new List<Vector2>(4);
+
+    public Quad upperQuad = null;
+    public Quad leftQuad = null;
+    public Quad rightQuad = null;
+    public Quad bottomQuad = null;
 
     public Room(int id, int x, int y, int quadSize, bool[] neighbours)
     {
@@ -528,4 +534,39 @@ public class Room
         }
     }
 
+    public void calcBorderQuads()
+    {
+        if (quads.Count == 1)
+        {
+            upperQuad = quads[0];
+            leftQuad = quads[0];
+            rightQuad = quads[0];
+            bottomQuad = quads[0];
+            return;
+        }
+
+        for (int i = 0; i < quads.Count; i++)
+        {
+            if (quads[i].x == 0)
+            {
+                if (bottomQuad == null || quads[i].y < bottomQuad.y)
+                    bottomQuad = quads[i];
+                if (upperQuad == null || quads[i].y > upperQuad.y)
+                    upperQuad = quads[i];
+            }
+            if (quads[i].y == 0)
+            {
+                if (leftQuad == null || quads[i].x < leftQuad.x)
+                    leftQuad = quads[i];
+                if (rightQuad == null || quads[i].x > rightQuad.x)
+                    rightQuad = quads[i];
+            }
+        }
+
+        Debug.Log("ID: " + id);
+        Debug.Log("LEFT: " + leftQuad.x + " " + leftQuad.y);
+        Debug.Log("RIGHT: " + rightQuad.x + " " + rightQuad.y);
+        Debug.Log("UP: " + upperQuad.x + " " + upperQuad.y);
+        Debug.Log("DOWN: " + bottomQuad.x + " " + bottomQuad.y);
+    }
 }

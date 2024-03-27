@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 public class Generator : MonoBehaviour
 {
@@ -29,7 +31,7 @@ public class Generator : MonoBehaviour
 
         do
         {
-            bestGraph = null;
+            //bestGraph = null;
 
             for (int i = 0; i < maps.population.Length; i++)
             {
@@ -48,6 +50,7 @@ public class Generator : MonoBehaviour
 
             maps.newGeneration();
 
+
             yield return null;
         }
         while (maps.generations < settings.maxGenerations);
@@ -63,6 +66,9 @@ public class Generator : MonoBehaviour
             r.show(bestGraph.shiftAmount, bestGraph);
 
         time = Time.time - time;
+
+        createCorridors();
+
 
         Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
         Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
@@ -81,6 +87,151 @@ public class Generator : MonoBehaviour
         Debug.Log("malus connection: " + bestGraph.malus);
 
         DataLogger.log(settings, bestGraph, time, maps.generations);
+    }
+
+    public void createCorridors()
+    {
+        Room[] rooms = bestGraph.rooms;
+        bool[][] matrix = bestGraph.matrix;
+        Vector2 pivot1;
+        Vector2 pivot2;
+        GameObject corridors = new GameObject("Corridors");
+        GameObject go;
+
+        int x = 0;
+
+        foreach (Room room in rooms)
+        {
+            room.calcBorderQuads();
+        }
+
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            if (rooms[i].up != null && matrix[i][rooms[i].up.id])
+            {
+                Debug.Log(rooms[i].upperQuad == null);
+                Debug.Log(rooms[i].bottomQuad == null);
+                Debug.Log(rooms[i].leftQuad == null);
+                Debug.Log(rooms[i].rightQuad == null);
+                pivot1 = rooms[i].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
+                pivot2 = rooms[rooms[i].up.id].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
+
+                while (pivot1 != pivot2)
+                {
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot1;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot2;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+
+
+                    pivot1 = pivot1 + Vector2.up;
+                    pivot2 = pivot2 + Vector2.down;
+                    x++;
+                }
+                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.transform.position = pivot1;
+                go.transform.localScale = Vector2.one;
+                go.transform.parent = corridors.transform;
+
+            }
+            if (rooms[i].right != null && matrix[i][rooms[i].right.id])
+            {
+                Debug.Log(rooms[i].upperQuad == null);
+                Debug.Log(rooms[i].bottomQuad == null);
+                Debug.Log(rooms[i].leftQuad == null);
+                Debug.Log(rooms[i].rightQuad == null);
+                pivot1 = rooms[i].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                pivot2 = rooms[rooms[i].right.id].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
+
+                while (pivot1 != pivot2)
+                {
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot1;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot2;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    pivot1 = pivot1 + Vector2.right;
+                    pivot2 = pivot2 + Vector2.left;
+                    x++;
+                }
+                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.transform.position = pivot1;
+                go.transform.localScale = Vector2.one;
+                go.transform.parent = corridors.transform;
+            }
+            if (rooms[i].down != null && matrix[i][rooms[i].down.id])
+            {
+                Debug.Log(rooms[i].upperQuad == null);
+                Debug.Log(rooms[i].bottomQuad == null);
+                Debug.Log(rooms[i].leftQuad == null);
+                Debug.Log(rooms[i].rightQuad == null);
+                pivot1 = rooms[i].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                pivot2 = rooms[rooms[i].down.id].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
+
+                while (pivot1 != pivot2)
+                {
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot1;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot2;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    pivot1 = pivot1 + Vector2.down;
+                    pivot2 = pivot2 + Vector2.up;
+                    x++;
+                }
+                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.transform.position = pivot1;
+                go.transform.localScale = Vector2.one;
+                go.transform.parent = corridors.transform;
+            }
+            if (rooms[i].left != null && matrix[i][rooms[i].left.id])
+            {
+                Debug.Log(rooms[i].upperQuad == null);
+                Debug.Log(rooms[i].bottomQuad == null);
+                Debug.Log(rooms[i].leftQuad == null);
+                Debug.Log(rooms[i].rightQuad == null);
+                pivot1 = rooms[i].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                pivot2 = rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
+
+                while (pivot1 != pivot2)
+                {
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot1;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    go.transform.position = pivot2;
+                    go.transform.localScale = Vector2.one;
+                    go.transform.parent = corridors.transform;
+
+                    pivot1 = pivot1 + Vector2.left;
+                    pivot2 = pivot2 + Vector2.right;
+                    x++;
+                }
+                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.transform.position = pivot1;
+                go.transform.localScale = Vector2.one;
+                go.transform.parent = corridors.transform;
+                x = 0;
+            }
+        }
     }
 
     public void OnDrawGizmos()
