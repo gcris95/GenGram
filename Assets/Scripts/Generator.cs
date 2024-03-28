@@ -100,19 +100,15 @@ public class Generator : MonoBehaviour
 
         int x = 0;
 
+        bool[] visited = new bool[rooms.Length];
+
         foreach (Room room in rooms)
-        {
             room.calcBorderQuads();
-        }
 
         for (int i = 0; i < rooms.Length; i++)
         {
-            if (rooms[i].up != null && matrix[i][rooms[i].up.id])
+            if (rooms[i].up != null && !visited[rooms[i].up.id] && matrix[i][rooms[i].up.id])
             {
-                Debug.Log(rooms[i].upperQuad == null);
-                Debug.Log(rooms[i].bottomQuad == null);
-                Debug.Log(rooms[i].leftQuad == null);
-                Debug.Log(rooms[i].rightQuad == null);
                 pivot1 = rooms[i].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
                 pivot2 = rooms[rooms[i].up.id].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
 
@@ -158,12 +154,8 @@ public class Generator : MonoBehaviour
                 go.transform.parent = corridors.transform;
 
             }
-            if (rooms[i].right != null && matrix[i][rooms[i].right.id])
+            if (rooms[i].right != null && !visited[rooms[i].right.id] && matrix[i][rooms[i].right.id])
             {
-                Debug.Log(rooms[i].upperQuad == null);
-                Debug.Log(rooms[i].bottomQuad == null);
-                Debug.Log(rooms[i].leftQuad == null);
-                Debug.Log(rooms[i].rightQuad == null);
                 pivot1 = rooms[i].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
                 pivot2 = rooms[rooms[i].right.id].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
 
@@ -208,12 +200,8 @@ public class Generator : MonoBehaviour
                 go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                 go.transform.parent = corridors.transform;
             }
-            if (rooms[i].down != null && matrix[i][rooms[i].down.id])
+            if (rooms[i].down != null && !visited[rooms[i].down.id] && matrix[i][rooms[i].down.id])
             {
-                Debug.Log(rooms[i].upperQuad == null);
-                Debug.Log(rooms[i].bottomQuad == null);
-                Debug.Log(rooms[i].leftQuad == null);
-                Debug.Log(rooms[i].rightQuad == null);
                 pivot1 = rooms[i].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
                 pivot2 = rooms[rooms[i].down.id].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
 
@@ -258,12 +246,8 @@ public class Generator : MonoBehaviour
                 go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                 go.transform.parent = corridors.transform;
             }
-            if (rooms[i].left != null && matrix[i][rooms[i].left.id])
+            if (rooms[i].left != null && !visited[rooms[i].left.id] && matrix[i][rooms[i].left.id])
             {
-                Debug.Log(rooms[i].upperQuad == null);
-                Debug.Log(rooms[i].bottomQuad == null);
-                Debug.Log(rooms[i].leftQuad == null);
-                Debug.Log(rooms[i].rightQuad == null);
                 pivot1 = rooms[i].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
                 pivot2 = rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
 
@@ -309,6 +293,8 @@ public class Generator : MonoBehaviour
                 go.transform.parent = corridors.transform;
                 x = 0;
             }
+
+            visited[i] = true;
         }
     }
 
