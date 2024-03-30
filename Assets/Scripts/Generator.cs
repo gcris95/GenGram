@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Color = UnityEngine.Color;
 
 public class Generator : MonoBehaviour
@@ -11,7 +12,8 @@ public class Generator : MonoBehaviour
     Graph g;
     Graph bestGraph;
     Population maps;
-
+    Tilemap tilemap;
+    Tilemap collTilemap;
 
     // Start is called before the first frame update
     void Start()
@@ -298,6 +300,11 @@ public class Generator : MonoBehaviour
         }
     }
 
+    public void addTiles()
+    {        
+
+    }
+
     public void OnDrawGizmos()
     {
         if (bestGraph == null)
@@ -308,35 +315,31 @@ public class Generator : MonoBehaviour
 
         Room[] rooms = bestGraph.rooms;
 
-        Color[] colors = new Color[] { Color.white, Color.blue, Color.red, Color.green, Color.cyan, Color.yellow, Color.magenta };
+        //Color[] colors = new Color[] { Color.white, Color.blue, Color.red, Color.green, Color.cyan, Color.yellow, Color.magenta };
+                Gizmos.color = Color.green;
 
         for (int j = 0; j < rooms.Length; j++)
         {
-            if (j == 0)
-                Gizmos.color = Color.blue;
-            else if (j == bestGraph.lastRoomId)
-                Gizmos.color = Color.red;
-            else
-                Gizmos.color = Color.green;
+            //if (j == 0)
+            //    Gizmos.color = Color.blue;
+            //else if (j == bestGraph.lastRoomId)
+            //    Gizmos.color = Color.red;
+            //else
+            //    Gizmos.color = Color.green;
             // Draw rooms
             for (int i = 0; i < rooms[j].vertices.Count - 1; i++)
                 Gizmos.DrawLine(rooms[j].vertices[i], rooms[j].vertices[i + 1]);
             Gizmos.DrawLine(rooms[j].vertices[rooms[j].vertices.Count - 1], rooms[j].vertices[0]);
-            Gizmos.color = colors[bestGraph.distances[rooms[j].id] % 7];
-            Gizmos.DrawCube(rooms[j].pivot, Vector3.one * 3f);
+            //Gizmos.color = colors[bestGraph.distances[rooms[j].id] % 7];
+            //Gizmos.DrawCube(rooms[j].pivot, Vector3.one * 3f);
         }
 
-        foreach (Room r in rooms)
-        {
+        //Gizmos.color = Color.white;
 
-        }
-
-        Gizmos.color = Color.white;
-
-        for (int i = 0; i < rooms.Length; i++)
-            for (int j = 0; j < rooms.Length; j++)
-                if (matrix[i][j])
-                    Gizmos.DrawLine(rooms[i].pivot, rooms[j].pivot);
+        //for (int i = 0; i < rooms.Length; i++)
+        //    for (int j = 0; j < rooms.Length; j++)
+        //        if (matrix[i][j])
+        //            Gizmos.DrawLine(rooms[i].pivot, rooms[j].pivot);
 
     }
 }

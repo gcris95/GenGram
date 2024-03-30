@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Quad
 {
     public int x, y;
     public int size;
     public Vector2 pivot = new Vector2(0, 0);
+    public Tile tile;
 
     public Quad up, right, down, left;
 

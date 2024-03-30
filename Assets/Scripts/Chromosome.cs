@@ -289,13 +289,13 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        roomsFitness *= /*settings.roomNumberWeight*/ 0.25f;
-        sizeFitness *= /*settings.sizeWeight*/ 0.25f;
-        distanceFitness *= /*settings.distanceWeight*/ 0.25f;
+        roomsFitness *= /*settings.roomNumberWeight*/ 0.33f;
+        sizeFitness *= /*settings.sizeWeight*/ 0.34f;
+        distanceFitness *= /*settings.distanceWeight*/ 0.33f;
         connectionFitness *= /*settings.connectionWeight*/ 0.25f;
         hwFitness *= /*settings.hwRatioWeight*/ 0.2f;
 
-        fitness = roomsFitness + distanceFitness + sizeFitness + connectionFitness /*+ hwFitness*/;
+        fitness = roomsFitness + distanceFitness + sizeFitness /*+*/ /*connectionFitness*/ /*+ hwFitness*/;
 
         //#region Extra room number
 
