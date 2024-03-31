@@ -16,6 +16,8 @@ public class Quad
     // vertices
     public Vector2 upLeft, upRight, downRight, downLeft;
 
+    public TileType tileType = TileType.floorTile;
+
     public Quad(int x, int y, int size)
     {
         this.x = x;
