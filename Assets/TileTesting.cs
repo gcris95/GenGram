@@ -1,24 +1,27 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum TileType
+public enum TileType : int
 {
-    topBorderTile,
-    sxBorderTile,
-    dxBorderTile,
-    botBorderTile,
+    floorTile = 0,
+    soloTile = 1,
 
-    topSxangleTile,
-    topDxangleTile,
-    botSxangleTile,
-    botDxangleTile,
+    topBorderTile = 2,
+    sxBorderTile = 3,
+    dxBorderTile = 4,
+    botBorderTile = 5,
+
+    topSxangleTile = 6,
+    topDxangleTile = 7,
+    botSxangleTile = 8,
+    botDxangleTile = 9,
 
     #region external angles
 
-    exTopSxangleTile,
-    exTopDxangleTile,
-    exBotSxangleTile,
-    exBotDxangleTile,
+    exTopSxangleTile = 10,
+    exTopDxangleTile = 11,
+    exBotSxangleTile = 12,
+    exBotDxangleTile = 13,
 
     /*
     *  o x x o
@@ -26,7 +29,7 @@ public enum TileType
     *  x x x x
     *  x x x x
     */
-    exDoubleTopAngleTile,
+    exDoubleTopAngleTile = 14,
 
     /*
     *  o x x x
@@ -34,7 +37,7 @@ public enum TileType
     *  x x x x
     *  o x x x
     */
-    exDoubleLeftAngleTile,
+    exDoubleLeftAngleTile = 15,
 
     /*
     *  x x x o
@@ -42,7 +45,7 @@ public enum TileType
     *  x x x x
     *  x x x o
     */
-    exDoubleRightAngleTile,
+    exDoubleRightAngleTile = 16,
 
     /*
     *  x x x x
@@ -50,7 +53,7 @@ public enum TileType
     *  x x x x
     *  o x x o
     */
-    exDoubleBotAngleTile,
+    exDoubleBotAngleTile = 17,
 
     /*
      *  o x x x
@@ -58,7 +61,7 @@ public enum TileType
      *  x x x x
      *  x x x o
      */
-    exDoubleTopRightAngleTile,
+    exDoubleTopRightAngleTile = 18,
 
     /*
     *  x x x o
@@ -66,60 +69,57 @@ public enum TileType
     *  x x x x
     *  o x x x
     */
-    exDoubleBotRightAngleTile,
+    exDoubleBotRightAngleTile = 19,
 
     //Triple point
-    exTripleTopSxAngleTile,
-    exTripleTopDxAngleTile,
-    exTripleBotSxAngleTile,
-    exTripleBopDxAngleTile,
+    exTripleTopSxAngleTile = 20,
+    exTripleTopDxAngleTile = 21,
+    exTripleBotSxAngleTile = 22,
+    exTripleBopDxAngleTile = 23,
 
 
     //Quadruple point
-    exAllAngleTile,
+    exAllAngleTile = 24,
 
     #endregion
 
     #region borders + intern angles
     //Single angle
-    topBorderLeftAngleTile,
-    topBorderRightAngleTile,
+    topBorderLeftAngleTile = 25,
+    topBorderRightAngleTile = 26,
 
-    leftBorderTopAngleTile,
-    leftBorderBotAngleTile,
+    leftBorderTopAngleTile = 27,
+    leftBorderBotAngleTile = 28,
 
-    rightBorderTopAngleTile,
-    rightBorderBotAngleTile,
+    rightBorderTopAngleTile = 29,
+    rightBorderBotAngleTile = 30,
 
-    botBorderLeftAngleTile,
-    botBorderRightAngleTile,
+    botBorderLeftAngleTile = 31,
+    botBorderRightAngleTile = 32,
 
     //Double angle
-    topBorderBotAnglesTile,
-    leftBorderRightAnglesTile,
-    rightBorderLeftAnglesTile,
-    botBorderTopAnglesTile,
+    topBorderBotAnglesTile = 33,
+    leftBorderRightAnglesTile = 34,
+    rightBorderLeftAnglesTile = 35,
+    botBorderTopAnglesTile = 36,
 
     #endregion
 
     #region angles + intern angles
-    topSxangleAndAngleTile,
-    topDxangleAndAngleTile,
-    botSxangleAndAngleTile,
-    botDxangleAndAngleTile,
+    topSxangleAndAngleTile = 37,
+    topDxangleAndAngleTile = 38,
+    botSxangleAndAngleTile = 39,
+    botDxangleAndAngleTile = 40,
 
     #endregion
 
-    uUpTile,
-    uBotTile,
-    uLeftTile,
-    uRightTile,
-
-    floorTile,
-    soloTile
+    uUpTile = 41,
+    uBotTile = 42,
+    uLeftTile = 43,
+    uRightTile = 44
 }
 
-public class TileTesting : MonoBehaviour
+public class TileSetting : MonoBehaviour
 {
     public Tilemap tilemap;
     public Tilemap collTilemap;
@@ -137,8 +137,10 @@ public class TileTesting : MonoBehaviour
     public TileBase exBotSXAngle;
     public TileBase exBotDXAngle;
 
-    public int quadtype;
+    private TileBase[] tiles;
+
     private int[] indeces;
+    private int[][] indecesMatrix;
 
     #region borders
     int[] topBorderTiles = new int[] { 2, 2, 2, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
@@ -215,7 +217,7 @@ public class TileTesting : MonoBehaviour
     int[] exTripleTopSxAngleTiles = new int[] { 2, 6, 6, 2, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6 };
     int[] exTripleTopDxAngleTiles = new int[] { 2, 6, 6, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8 };
     int[] exTripleBotSxAngleTiles = new int[] { 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 8 };
-    int[] exTripleBopDxAngleTiles = new int[] { 6, 6, 6, 2, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 8 };
+    int[] exTripleBotDxAngleTiles = new int[] { 6, 6, 6, 2, 6, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 8 };
 
 
     //Quadruple point
@@ -246,6 +248,12 @@ public class TileTesting : MonoBehaviour
     #endregion
 
     #region angles + intern angles
+    /*
+     * o o o o
+     * o x x x
+     * o x x x
+     * o x x o
+     */
     int[] topSxangleAndAngleTiles = new int[] { 0, 2, 2, 2, 0, 6, 6, 6, 0, 6, 6, 6, 0, 6, 6, 8 };
     int[] topDxangleAndAngleTiles = new int[] { 2, 2, 2, 1, 6, 6, 6, 1, 6, 6, 6, 1, 7, 6, 6, 1 };
     int[] botSxangleAndAngleTiles = new int[] { 0, 6, 6, 2, 0, 6, 6, 6, 0, 6, 6, 6, 4, 3, 3, 3 };
@@ -261,18 +269,65 @@ public class TileTesting : MonoBehaviour
     #endregion
 
     int[] soloTiles = new int[] { 0, 2, 2, 1, 0, 6, 6, 1, 0, 6, 6, 1, 4, 3, 3, 5 };
-    int[] insideTiles = new int[] { 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
+    int[] floorTiles = new int[] { 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
 
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
-        TileBase[] tiles = new TileBase[] { sxSide, dxSide, topSide, botSide, botSXAngle, botDXAngle, floor, exBotSXAngle, exBotDXAngle };
+        tiles = new TileBase[] { sxSide, dxSide, topSide, botSide, botSXAngle, botDXAngle, floor, exBotSXAngle, exBotDXAngle };
 
-        setIndeces();
+        indecesMatrix = new int[45][];
 
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        go.transform.position = Vector3.one;
-        go.transform.localScale = Vector2.one * 4;
+        indecesMatrix[0] = floorTiles;
+        indecesMatrix[1] = soloTiles;
+        indecesMatrix[2] = topBorderTiles;
+        indecesMatrix[3] = sxBorderTiles;
+        indecesMatrix[4] = dxBorderTiles;
+        indecesMatrix[5] = botBorderTiles;
+        indecesMatrix[6] = topSxangleTiles;
+        indecesMatrix[7] = topDxangleTiles;
+        indecesMatrix[8] = botSxangleTiles;
+        indecesMatrix[9] = botDxangleTiles;
+        indecesMatrix[10] = exTopSxangleTiles;
+        indecesMatrix[11] = exTopDxangleTiles;
+        indecesMatrix[12] = exBotSxangleTiles;
+        indecesMatrix[13] = exBotDxangleTiles;
+        indecesMatrix[14] = exDoubleTopAngleTiles;
+        indecesMatrix[15] = exDoubleLeftAngleTiles;
+        indecesMatrix[16] = exDoubleRightAngleTiles;
+        indecesMatrix[17] = exDoubleBotAngleTiles;
+        indecesMatrix[18] = exDoubleTopRightAngleTiles;
+        indecesMatrix[19] = exDoubleBotRightAngleTiles;
+        indecesMatrix[20] = exTripleTopSxAngleTiles;
+        indecesMatrix[21] = exTripleTopDxAngleTiles;
+        indecesMatrix[22] = exTripleBotSxAngleTiles;
+        indecesMatrix[23] = exTripleBotDxAngleTiles;
+        indecesMatrix[24] = exAllAngleTiles;
+        indecesMatrix[25] = topBorderLeftAngleTiles;
+        indecesMatrix[26] = topBorderRightAngleTiles;
+        indecesMatrix[27] = leftBorderTopAngleTiles;
+        indecesMatrix[28] = leftBorderBotAngleTiles;
+        indecesMatrix[29] = rightBorderTopAngleTiles;
+        indecesMatrix[30] = rightBorderBotAngleTiles;
+        indecesMatrix[31] = botBorderLeftAngleTiles;
+        indecesMatrix[32] = botBorderRightAngleTiles;
+        indecesMatrix[33] = topBorderBotAnglesTiles;
+        indecesMatrix[34] = leftBorderRightAnglesTiles;
+        indecesMatrix[35] = rightBorderLeftAnglesTiles;
+        indecesMatrix[36] = botBorderTopAnglesTiles;
+        indecesMatrix[37] = topSxangleAndAngleTiles;
+        indecesMatrix[38] = topDxangleAndAngleTiles;
+        indecesMatrix[39] = botSxangleAndAngleTiles;
+        indecesMatrix[40] = botDxangleAndAngleTiles;
+        indecesMatrix[41] = uUpTiles;
+        indecesMatrix[42] = uLeftTiles;
+        indecesMatrix[43] = uRightTiles;
+        indecesMatrix[44] = uBotTiles;
+    }
+
+    public void setTile(Vector2 quadPosition, TileType type)
+    {
+        indeces = indecesMatrix[(int)type];
 
         float x = -1.5f;
         float y = 1.5f;
@@ -282,7 +337,7 @@ public class TileTesting : MonoBehaviour
         {
             for (int j = 0; j < 4; j++)
             {
-                Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(go.transform.position.x + x, go.transform.position.y + y));
+                Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(quadPosition.x + x, quadPosition.y + y));
                 if (indeces[cont] != 7)
                     tilemap.SetTile(cellPosition, tiles[indeces[cont]]);
                 else
@@ -294,45 +349,5 @@ public class TileTesting : MonoBehaviour
             x = -1.5f;
             y--;
         }
-    }
-
-    public void setIndeces()
-    {
-        if (quadtype == 0)
-            indeces = topBorderTiles;
-        else if (quadtype == 1)
-            indeces = sxBorderTiles;
-        else if (quadtype == 2)
-            indeces = dxBorderTiles;
-        else if (quadtype == 3)
-            indeces = botBorderTiles;
-        else if (quadtype == 4)
-            indeces = insideTiles;
-        else if (quadtype == 5)
-            indeces = topSxangleTiles;
-        else if (quadtype == 6)
-            indeces = topDxangleTiles;
-        else if (quadtype == 7)
-            indeces = botSxangleTiles;
-        else if (quadtype == 8)
-            indeces = botDxangleTiles;
-        else if (quadtype == 9)
-            indeces = uUpTiles;
-        else if (quadtype == 10)
-            indeces = uBotTiles;
-        else if (quadtype == 11)
-            indeces = uLeftTiles;
-        else if (quadtype == 12)
-            indeces = uRightTiles;
-        else if (quadtype == 13)
-            indeces = soloTiles;
-        else if (quadtype == 14)
-            indeces = exTopSxangleTiles;
-        else if (quadtype == 15)
-            indeces = exTopDxangleTiles;
-        else if (quadtype == 16)
-            indeces = exBotSxangleTiles;
-        else if (quadtype == 17)
-            indeces = exBotDxangleTiles;
     }
 }
