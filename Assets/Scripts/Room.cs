@@ -213,7 +213,6 @@ public class Room
 
             height = quads[0].size;
             width = quads[0].size;
-
             return;
         }
 
@@ -271,6 +270,7 @@ public class Room
                 if (current.up != null)
                 {
                     direction = 0;
+
                     current = current.up;
                     continue;
                 }
@@ -358,6 +358,438 @@ public class Room
 
         width = maxX - minX;
         height = maxY - minY;
+    }
+
+    public void setTiles()
+    {
+        if (quads.Count == 1)
+        {
+            quads[0].tileType = TileType.soloTile;
+            return;
+        }
+
+        Quad current = quads[0];
+        while (current.up != null)
+            current = current.up;
+
+        Quad first = current;
+
+        int direction = 1;
+        int cont = 0;
+
+        while (cont < 3 || current != first)
+        {
+            if (direction == 0)
+            {
+                if (current.left != null)
+                {
+                    direction = 3;
+
+                    switch (current.tileType)
+                    {
+                        // Se la tile è vuota
+                        case TileType.floorTile:
+                            current.tileType = TileType.exBotSxangleTile;                   // Assegna solo l'angolo in alto a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra
+                        case TileType.exBotDxangleTile:
+                            current.tileType = TileType.exDoubleBotAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra
+                        case TileType.exTopDxangleTile:
+                            current.tileType = TileType.exDoubleTopRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in basso a destra 
+                        case TileType.exTopSxangleTile:
+                            current.tileType = TileType.exDoubleLeftAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
+                        case TileType.exDoubleRightAngleTile:
+                            current.tileType = TileType.exTripleBopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
+                        case TileType.exDoubleTopAngleTile:
+                            current.tileType = TileType.exTripleTopSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
+                        case TileType.exDoubleTopRightAngleTile:
+                            current.tileType = TileType.exTripleBotSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha gli altri 3 angoli
+                        case TileType.exTripleTopDxAngleTile:
+                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
+                            break;
+                        // Se la tile ha il bordo destro
+                        case TileType.dxBorderTile:
+                            current.tileType = TileType.rightBorderBotAngleTile;
+                            break;
+                        // Se la tile ha il bordo basso
+                        case TileType.topBorderTile:
+                            current.tileType = TileType.topBorderLeftAngleTile;
+                            break;
+                        //Se la tile ha il bordo destro e l'angolo basso
+                        case TileType.rightBorderTopAngleTile:
+                            current.tileType = TileType.rightBorderLeftAnglesTile;
+                            break;
+                        // Se la tile ha il bordo basso e l'angolo destro
+                        case TileType.topBorderRightAngleTile:
+                            current.tileType = TileType.topBorderBotAnglesTile;
+                            break;
+                        // Se la tile ha bordo basso e destro
+                        case TileType.topDxangleTile:
+                            current.tileType = TileType.topDxangleAndAngleTile;
+                            break;
+                    }
+
+                    current = current.left;
+                    continue;
+                }
+
+                switch (current.tileType)
+                {
+                    case TileType.floorTile:
+                        current.tileType = TileType.sxBorderTile;
+                        break;
+                    case TileType.botBorderTile:
+                        current.tileType = TileType.botSxangleTile;
+                        break;
+                    case TileType.botDxangleTile:
+                        current.tileType = TileType.uUpTile;
+                        break;
+                    case TileType.exTopDxangleTile:
+                        current.tileType = TileType.leftBorderTopAngleTile;
+                        break;
+                    case TileType.exBotDxangleTile:
+                        current.tileType = TileType.leftBorderBotAngleTile;
+                        break;
+                    case TileType.exDoubleRightAngleTile:
+                        current.tileType = TileType.leftBorderRightAnglesTile;
+                        break;
+                    case TileType.botBorderRightAngleTile:
+                        current.tileType = TileType.botSxangleAndAngleTile;
+                        break;
+                    case TileType.dxBorderTile:
+                        current.tileType = TileType.leftrightborder;
+                        break;
+                }
+
+                if (current.up == null)
+                {
+                    direction = 1;
+                    continue;
+                }
+                cont++;
+                current = current.up;
+            }
+            else if (direction == 1)
+            {
+                if (current.up != null)
+                {
+                    direction = 0;
+
+                    switch (current.tileType)
+                    {
+                        // Se la tile è vuota
+                        case TileType.floorTile:
+                            current.tileType = TileType.exTopSxangleTile;                   // Assegna solo l'angolo in alto a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra
+                        case TileType.exTopDxangleTile:
+                            current.tileType = TileType.exDoubleTopAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra
+                        case TileType.exBotSxangleTile:
+                            current.tileType = TileType.exDoubleLeftAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in basso a destra 
+                        case TileType.exBotDxangleTile:
+                            current.tileType = TileType.exDoubleTopRightAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
+                        case TileType.exDoubleBotRightAngleTile:
+                            current.tileType = TileType.exTripleTopSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
+                        case TileType.exDoubleRightAngleTile:
+                            current.tileType = TileType.exTripleTopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
+                        case TileType.exDoubleBotAngleTile:
+                            current.tileType = TileType.exTripleBotSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha gli altri 3 angoli
+                        case TileType.exTripleBopDxAngleTile:
+                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
+                            break;
+                        // Se la tile ha il bordo destro
+                        case TileType.dxBorderTile:
+                            current.tileType = TileType.rightBorderTopAngleTile;
+                            break;
+                        // Se la tile ha il bordo basso
+                        case TileType.botBorderTile:
+                            current.tileType = TileType.botBorderLeftAngleTile;
+                            break;
+                        //Se la tile ha il bordo destro e l'angolo basso
+                        case TileType.rightBorderBotAngleTile:
+                            current.tileType = TileType.rightBorderLeftAnglesTile;
+                            break;
+                        // Se la tile ha il bordo basso e l'angolo destro
+                        case TileType.botBorderRightAngleTile:
+                            current.tileType = TileType.botBorderTopAnglesTile;
+                            break;
+                        // Se la tile ha bordo basso e destro
+                        case TileType.botDxangleTile:
+                            current.tileType = TileType.botDxangleAndAngleTile;
+                            break;
+                    }
+
+                    current = current.up;
+                    continue;
+                }                
+
+                switch (current.tileType)
+                {
+                    case TileType.floorTile:
+                        current.tileType = TileType.topBorderTile;
+                        break;
+                    case TileType.sxBorderTile:
+                        current.tileType = TileType.topSxangleTile;
+                        break;
+                    case TileType.botSxangleTile:
+                        current.tileType = TileType.uLeftTile;
+                        break;
+                    case TileType.exTopSxangleTile:
+                        current.tileType = TileType.rightBorderTopAngleTile;
+                        break;
+                    case TileType.exBotSxangleTile:
+                        current.tileType = TileType.rightBorderBotAngleTile;
+                        break;
+                    case TileType.exDoubleLeftAngleTile:
+                        current.tileType = TileType.rightBorderLeftAnglesTile;
+                        break;
+                    case TileType.leftBorderBotAngleTile:
+                        current.tileType = TileType.topSxangleAndAngleTile;
+                        break;
+                    case TileType.botBorderTile:
+                        current.tileType = TileType.topbotborder;
+                        break;
+                }
+
+                if (current.right == null)
+                {
+                    direction = 2;
+                    continue;
+                }
+
+                cont++;
+                current = current.right;
+
+            }
+            else if (direction == 2)
+            {
+                if (current.right != null)
+                {
+                    direction = 1;
+
+                    switch (current.tileType)
+                    {
+                        // Se la tile è vuota
+                        case TileType.floorTile:
+                            current.tileType = TileType.exTopDxangleTile;                   // Assegna solo l'angolo in alto a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra
+                        case TileType.exTopSxangleTile:
+                            current.tileType = TileType.exDoubleTopAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra
+                        case TileType.exBotSxangleTile:
+                            current.tileType = TileType.exDoubleBotRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in basso a destra 
+                        case TileType.exBotDxangleTile:
+                            current.tileType = TileType.exDoubleRightAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
+                        case TileType.exDoubleLeftAngleTile:
+                            current.tileType = TileType.exTripleTopSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
+                        case TileType.exDoubleBotAngleTile:
+                            current.tileType = TileType.exTripleBopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
+                        case TileType.exDoubleTopRightAngleTile:
+                            current.tileType = TileType.exTripleTopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha gli altri 3 angoli
+                        case TileType.exTripleBotSxAngleTile:
+                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
+                            break;
+                        // Se la tile ha il bordo destro
+                        case TileType.sxBorderTile:
+                            current.tileType = TileType.leftBorderTopAngleTile;
+                            break;
+                        // Se la tile ha il bordo basso
+                        case TileType.botBorderTile:
+                            current.tileType = TileType.botBorderRightAngleTile;
+                            break;
+                        //Se la tile ha il bordo destro e l'angolo basso
+                        case TileType.leftBorderBotAngleTile:
+                            current.tileType = TileType.leftBorderRightAnglesTile;
+                            break;
+                        // Se la tile ha il bordo basso e l'angolo destro
+                        case TileType.botBorderLeftAngleTile:
+                            current.tileType = TileType.botBorderTopAnglesTile;
+                            break;
+                        // Se la tile ha bordo basso e destro
+                        case TileType.botSxangleTile:
+                            current.tileType = TileType.botSxangleAndAngleTile;
+                            break;
+                    }
+
+                    current = current.right;
+                    continue;
+                }
+
+                switch (current.tileType)
+                {
+                    case TileType.floorTile:
+                        current.tileType = TileType.dxBorderTile;
+                        break;
+                    case TileType.topBorderTile:
+                        current.tileType = TileType.topDxangleTile;
+                        break;
+                    case TileType.topSxangleTile:
+                        current.tileType = TileType.uRightTile;
+                        break;
+                    case TileType.exTopSxangleTile:
+                        current.tileType = TileType.rightBorderTopAngleTile;
+                        break;
+                    case TileType.exBotSxangleTile:
+                        current.tileType = TileType.rightBorderBotAngleTile;
+                        break;
+                    case TileType.exDoubleLeftAngleTile:
+                        current.tileType = TileType.rightBorderLeftAnglesTile;
+                        break;
+                    case TileType.topBorderLeftAngleTile:
+                        current.tileType = TileType.topDxangleAndAngleTile;
+                        break;
+                    case TileType.sxBorderTile:
+                        current.tileType = TileType.leftrightborder;
+                        break;
+                }
+
+                if (current.down == null)
+                {
+                    direction = 3;
+                    continue;
+                }
+                cont++;
+                current = current.down;
+            }
+            else
+            {
+                if (current.down != null)
+                {
+                    direction = 2;
+
+                    switch (current.tileType)
+                    {
+                        // Se la tile è vuota
+                        case TileType.floorTile:
+                            current.tileType = TileType.exBotDxangleTile;                   // Assegna solo l'angolo in alto a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra
+                        case TileType.exBotSxangleTile:
+                            current.tileType = TileType.exDoubleBotAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra
+                        case TileType.exTopDxangleTile:
+                            current.tileType = TileType.exDoubleRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in basso a destra 
+                        case TileType.exTopSxangleTile:
+                            current.tileType = TileType.exDoubleTopRightAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
+                        case TileType.exDoubleLeftAngleTile:
+                            current.tileType = TileType.exTripleBotSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
+                            break;
+                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
+                        case TileType.exDoubleTopAngleTile:
+                            current.tileType = TileType.exTripleTopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
+                        case TileType.exDoubleBotRightAngleTile:
+                            current.tileType = TileType.exTripleBopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
+                            break;
+                        // Se la tile ha gli altri 3 angoli
+                        case TileType.exTripleTopSxAngleTile:
+                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
+                            break;
+                        // Se la tile ha il bordo destro
+                        case TileType.sxBorderTile:
+                            current.tileType = TileType.leftBorderBotAngleTile;
+                            break;
+                        // Se la tile ha il bordo basso
+                        case TileType.topBorderTile:
+                            current.tileType = TileType.topBorderRightAngleTile;
+                            break;
+                        //Se la tile ha il bordo destro e l'angolo basso
+                        case TileType.leftBorderTopAngleTile:
+                            current.tileType = TileType.leftBorderRightAnglesTile;
+                            break;
+                        // Se la tile ha il bordo basso e l'angolo destro
+                        case TileType.topBorderLeftAngleTile:
+                            current.tileType = TileType.topBorderBotAnglesTile;
+                            break;
+                        // Se la tile ha bordo basso e destro
+                        case TileType.topSxangleTile:
+                            current.tileType = TileType.topSxangleAndAngleTile;
+                            break;
+                    }
+
+                    current = current.down;
+                    continue;
+                }
+
+                switch (current.tileType)
+                {
+                    case TileType.floorTile:
+                        current.tileType = TileType.botBorderTile;
+                        break;
+                    case TileType.dxBorderTile:
+                        current.tileType = TileType.botDxangleTile;
+                        break;
+                    case TileType.topDxangleTile:
+                        current.tileType = TileType.uBotTile;
+                        break;
+                    case TileType.exTopSxangleTile:
+                        current.tileType = TileType.botBorderLeftAngleTile;
+                        break;
+                    case TileType.exTopDxangleTile:
+                        current.tileType = TileType.botBorderRightAngleTile;
+                        break;
+                    case TileType.exDoubleTopAngleTile:
+                        current.tileType = TileType.botBorderTopAnglesTile;
+                        break;
+                    case TileType.rightBorderTopAngleTile:
+                        current.tileType = TileType.botDxangleAndAngleTile;
+                        break;
+                    case TileType.topBorderTile:
+                        current.tileType = TileType.topbotborder;
+                        break;
+                }
+
+                if (current.left == null)
+                {
+                    direction = 0;
+                    continue;
+                }
+                cont++;
+                current = current.left;
+            }
+        }
     }
 
     public void calcArea()
@@ -512,7 +944,7 @@ public class Room
         quads.Insert(quadIndex, newQ);
     }
 
-    public void show(float shiftAmount, Graph g)
+    public void show(float shiftAmount, Graph g, TileSetting ts)
     {
         GameObject room = new GameObject("Room " + id);
         RoomMono r = room.AddComponent<RoomMono>();
@@ -526,10 +958,13 @@ public class Room
         r.area = area;
         r.x = x; r.y = y;
 
+        setTiles();
+
         Vector2 shift = new Vector2((x * shiftAmount), (y * shiftAmount));
         foreach (Quad q in quads)
         {
             q.shiftAgain(shift);
+            ts.setTile(q.pivot, q.tileType);
             q.show(room);
         }
     }

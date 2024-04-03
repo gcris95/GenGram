@@ -60,6 +60,7 @@ public class Quad
 
         qm.x = x;
         qm.y = y;
+        qm.tile = (int)tileType;
     }
 
     public Quad addUpNeighbour(Quad newQ)
@@ -202,4 +203,5 @@ public class Quad
 public class QuadMono : MonoBehaviour
 {
     public int x, y;
+    public int tile;
 }

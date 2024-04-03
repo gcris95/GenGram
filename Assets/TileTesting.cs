@@ -113,10 +113,17 @@ public enum TileType : int
 
     #endregion
 
-    uUpTile = 41,
-    uBotTile = 42,
-    uLeftTile = 43,
-    uRightTile = 44
+    #region border+border
+
+    topbotborder = 41,
+    leftrightborder = 42,
+
+    #endregion
+
+    uUpTile = 43,
+    uBotTile = 44,
+    uLeftTile = 45,
+    uRightTile = 46
 }
 
 public class TileSetting : MonoBehaviour
@@ -261,6 +268,11 @@ public class TileSetting : MonoBehaviour
 
     #endregion
 
+    #region border+border
+    int[] topBotTiles = new int[] { 2, 2, 2, 2, 6, 6, 6, 6, 6, 6, 6, 6, 3, 3, 3, 3 };
+    int[] leftRightTiles = new int[] { 0, 6, 6, 1, 0, 6, 6, 1, 0, 6, 6, 1, 0, 6, 6, 1 };
+    #endregion
+
     #region U tiles
     int[] uUpTiles = new int[] { 0, 6, 6, 1, 0, 6, 6, 1, 0, 6, 6, 1, 4, 3, 3, 5 };
     int[] uBotTiles = new int[] { 0, 2, 2, 1, 0, 6, 6, 1, 0, 6, 6, 1, 0, 6, 6, 1 };
@@ -272,11 +284,11 @@ public class TileSetting : MonoBehaviour
     int[] floorTiles = new int[] { 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
 
 
-    private void Start()
+    private void Awake()
     {
         tiles = new TileBase[] { sxSide, dxSide, topSide, botSide, botSXAngle, botDXAngle, floor, exBotSXAngle, exBotDXAngle };
 
-        indecesMatrix = new int[45][];
+        indecesMatrix = new int[47][];
 
         indecesMatrix[0] = floorTiles;
         indecesMatrix[1] = soloTiles;
@@ -319,10 +331,12 @@ public class TileSetting : MonoBehaviour
         indecesMatrix[38] = topDxangleAndAngleTiles;
         indecesMatrix[39] = botSxangleAndAngleTiles;
         indecesMatrix[40] = botDxangleAndAngleTiles;
-        indecesMatrix[41] = uUpTiles;
-        indecesMatrix[42] = uLeftTiles;
-        indecesMatrix[43] = uRightTiles;
-        indecesMatrix[44] = uBotTiles;
+        indecesMatrix[41] = topBotTiles;
+        indecesMatrix[42] = leftRightTiles;
+        indecesMatrix[43] = uUpTiles;
+        indecesMatrix[44] = uLeftTiles;
+        indecesMatrix[45] = uRightTiles;
+        indecesMatrix[46] = uBotTiles;
     }
 
     public void setTile(Vector2 quadPosition, TileType type)

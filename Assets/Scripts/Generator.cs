@@ -12,12 +12,12 @@ public class Generator : MonoBehaviour
     Graph g;
     Graph bestGraph;
     Population maps;
-    Tilemap tilemap;
-    Tilemap collTilemap;
+    TileSetting ts;
 
     // Start is called before the first frame update
     void Start()
     {
+        ts = GetComponent<TileSetting>();
         StartCoroutine(generation());
     }
 
@@ -64,13 +64,16 @@ public class Generator : MonoBehaviour
         //Debug.Log("Best last: " + bestGraph.lastRoomId);
         //Debug.Log("Best lastconnection: " + bestGraph.getConnections(bestGraph.lastRoomId).Count);
 
-        foreach (Room r in bestGraph.rooms)
-            r.show(bestGraph.shiftAmount, bestGraph);
+        
 
         time = Time.time - time;
 
-        createCorridors();
+        //createCorridors();
 
+        foreach (Room r in bestGraph.rooms)
+            r.show(bestGraph.shiftAmount, bestGraph, ts);
+
+        //addTiles();
 
         Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
         Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
@@ -301,8 +304,13 @@ public class Generator : MonoBehaviour
     }
 
     public void addTiles()
-    {        
-
+    {
+        foreach (Room r in bestGraph.rooms)
+        {
+            r.setTiles();
+            foreach (Quad q in r.quads)
+                ts.setTile(q.pivot, q.tileType);
+        }
     }
 
     public void OnDrawGizmos()
@@ -316,7 +324,7 @@ public class Generator : MonoBehaviour
         Room[] rooms = bestGraph.rooms;
 
         //Color[] colors = new Color[] { Color.white, Color.blue, Color.red, Color.green, Color.cyan, Color.yellow, Color.magenta };
-                Gizmos.color = Color.green;
+        Gizmos.color = Color.green;
 
         for (int j = 0; j < rooms.Length; j++)
         {
