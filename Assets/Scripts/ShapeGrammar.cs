@@ -48,7 +48,8 @@ public class ShapeGrammar
 
         foreach (Room r in list)
         {
-            r.createVertices();
+            //r.createVertices();
+            r.calcSize();
             shiftamount = Mathf.Max(shiftamount, r.width, r.height);
         }
 

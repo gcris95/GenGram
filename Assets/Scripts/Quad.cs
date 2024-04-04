@@ -46,6 +46,7 @@ public class Quad
 
     public void shiftAgain(Vector2 shiftAmount)
     {
+        shiftQuad();
         pivot += shiftAmount;
     }
 

@@ -199,165 +199,194 @@ public class Room
         return lastRoom;
     }
 
-    public void createVertices()
+    //public void createVertices()
+    //{
+    //    //Debug.Log("--------------CREAZIONE VERTICI--------------");
+    //    if (quads.Count == 1)
+    //    {
+    //        quads[0].createVertices(true, true, true, true);
+
+    //        vertices.Add(quads[0].upLeft);
+    //        vertices.Add(quads[0].upRight);
+    //        vertices.Add(quads[0].downRight);
+    //        vertices.Add(quads[0].downLeft);
+
+    //        height = quads[0].size;
+    //        width = quads[0].size;
+    //        return;
+    //    }
+
+    //    foreach (Quad q in quads)
+    //        q.shiftQuad();
+
+    //    Quad current = quads[0];
+    //    while (current.up != null)
+    //        current = current.up;
+
+    //    int direction = 1;
+
+    //    current.createVertices(true, false, false, false);
+
+    //    Vector2 first = current.upLeft;
+
+    //    vertices.Add(current.upLeft);
+
+    //    float maxY = 0, minY = 0, maxX = 0, minX = 0;
+    //    int c;
+
+    //    while (true)
+    //    {
+    //        c = quads.Count;
+    //        if (direction == 0)
+    //        {
+    //            if (current.left != null)
+    //            {
+    //                direction = 3;
+    //                current = current.left;
+    //                continue;
+    //            }
+
+    //            current.createVertices(true, false, false, false);
+    //            if (current.upLeft == first)
+    //                break;
+
+    //            vertices.Add(current.upLeft);
+
+    //            if (current.upLeft.y > maxY)
+    //                maxY = current.upLeft.y;
+    //            if (current.upLeft.x < minX)
+    //                minX = current.upLeft.x;
+
+    //            if (current.up == null)
+    //            {
+    //                direction = 1;
+    //                continue;
+    //            }
+
+    //            current = current.up;
+    //        }
+    //        else if (direction == 1)
+    //        {
+    //            if (current.up != null)
+    //            {
+    //                direction = 0;
+
+    //                current = current.up;
+    //                continue;
+    //            }
+
+    //            current.createVertices(false, true, false, false);
+    //            if (current.upRight == first)
+    //                break;
+
+
+    //            vertices.Add(current.upRight);
+
+    //            if (current.upRight.y > maxY)
+    //                maxY = current.upRight.y;
+    //            if (current.upRight.x > maxX)
+    //                maxX = current.upRight.x;
+
+    //            if (current.right == null)
+    //            {
+    //                direction = 2;
+    //                continue;
+    //            }
+
+    //            current = current.right;
+
+    //        }
+
+    //        else if (direction == 2)
+    //        {
+    //            if (current.right != null)
+    //            {
+    //                direction = 1;
+    //                current = current.right;
+    //                continue;
+    //            }
+
+    //            current.createVertices(false, false, true, false);
+    //            if (current.downRight == first)
+    //                break;
+
+    //            vertices.Add(current.downRight);
+
+    //            if (current.downRight.y < minY)
+    //                minY = current.downRight.y;
+    //            if (current.downRight.x > maxX)
+    //                maxX = current.downRight.x;
+
+
+    //            if (current.down == null)
+    //            {
+    //                direction = 3;
+    //                continue;
+    //            }
+
+    //            current = current.down;
+    //        }
+    //        else
+    //        {
+    //            if (current.down != null)
+    //            {
+    //                direction = 2;
+    //                current = current.down;
+    //                continue;
+    //            }
+
+    //            current.createVertices(false, false, false, true);
+    //            if (current.downLeft == first)
+    //                break;
+
+    //            vertices.Add(current.downLeft);
+
+    //            if (current.downLeft.y < minY)
+    //                minY = current.downLeft.y;
+    //            if (current.downLeft.x < minX)
+    //                minX = current.downLeft.x;
+
+    //            if (current.left == null)
+    //            {
+    //                direction = 0;
+    //                continue;
+    //            }
+
+    //            current = current.left;
+    //        }
+    //    }
+
+    //    width = maxX - minX;
+    //    height = maxY - minY;
+    //}
+
+    public void calcSize()
     {
-        //Debug.Log("--------------CREAZIONE VERTICI--------------");
         if (quads.Count == 1)
         {
-            quads[0].createVertices(true, true, true, true);
-
-            vertices.Add(quads[0].upLeft);
-            vertices.Add(quads[0].upRight);
-            vertices.Add(quads[0].downRight);
-            vertices.Add(quads[0].downLeft);
-
-            height = quads[0].size;
-            width = quads[0].size;
-            return;
+            float quadSize = quads[0].size;
+            height = quadSize;
+            width = quadSize;
         }
-
-        foreach (Quad q in quads)
-            q.shiftQuad();
-
-        Quad current = quads[0];
-        while (current.up != null)
-            current = current.up;
-
-        int direction = 1;
-
-        current.createVertices(true, false, false, false);
-
-        Vector2 first = current.upLeft;
-
-        vertices.Add(current.upLeft);
-
-        float maxY = 0, minY = 0, maxX = 0, minX = 0;
-        int c;
-
-        while (true)
+        else
         {
-            c = quads.Count;
-            if (direction == 0)
+            int minX = 0;
+            int maxX = 0;
+            int minY = 0;
+            int maxY = 0;
+
+            for (int i = 0; i < quads.Count; i++)
             {
-                if (current.left != null)
-                {
-                    direction = 3;
-                    current = current.left;
-                    continue;
-                }
-
-                current.createVertices(true, false, false, false);
-                if (current.upLeft == first)
-                    break;
-
-                vertices.Add(current.upLeft);
-
-                if (current.upLeft.y > maxY)
-                    maxY = current.upLeft.y;
-                if (current.upLeft.x < minX)
-                    minX = current.upLeft.x;
-
-                if (current.up == null)
-                {
-                    direction = 1;
-                    continue;
-                }
-
-                current = current.up;
-            }
-            else if (direction == 1)
-            {
-                if (current.up != null)
-                {
-                    direction = 0;
-
-                    current = current.up;
-                    continue;
-                }
-
-                current.createVertices(false, true, false, false);
-                if (current.upRight == first)
-                    break;
-
-
-                vertices.Add(current.upRight);
-
-                if (current.upRight.y > maxY)
-                    maxY = current.upRight.y;
-                if (current.upRight.x > maxX)
-                    maxX = current.upRight.x;
-
-                if (current.right == null)
-                {
-                    direction = 2;
-                    continue;
-                }
-
-                current = current.right;
-
+                minY = Mathf.Min(minX, quads[i].y);
+                maxY = Mathf.Max(maxX, quads[i].y);
+                minX = Mathf.Min(minX, quads[i].x);
+                maxX = Mathf.Max(maxX, quads[i].x);
             }
 
-            else if (direction == 2)
-            {
-                if (current.right != null)
-                {
-                    direction = 1;
-                    current = current.right;
-                    continue;
-                }
-
-                current.createVertices(false, false, true, false);
-                if (current.downRight == first)
-                    break;
-
-                vertices.Add(current.downRight);
-
-                if (current.downRight.y < minY)
-                    minY = current.downRight.y;
-                if (current.downRight.x > maxX)
-                    maxX = current.downRight.x;
-
-
-                if (current.down == null)
-                {
-                    direction = 3;
-                    continue;
-                }
-
-                current = current.down;
-            }
-            else
-            {
-                if (current.down != null)
-                {
-                    direction = 2;
-                    current = current.down;
-                    continue;
-                }
-
-                current.createVertices(false, false, false, true);
-                if (current.downLeft == first)
-                    break;
-
-                vertices.Add(current.downLeft);
-
-                if (current.downLeft.y < minY)
-                    minY = current.downLeft.y;
-                if (current.downLeft.x < minX)
-                    minX = current.downLeft.x;
-
-                if (current.left == null)
-                {
-                    direction = 0;
-                    continue;
-                }
-
-                current = current.left;
-            }
+            float quadSize = quads[0].size;
+            height = (maxY * quadSize + quadSize / 2) - (minY * quads[0].size - quadSize / 2);
+            width = (maxX * quads[0].size + quadSize / 2) - (minX * quads[0].size - quadSize / 2);
         }
-
-        width = maxX - minX;
-        height = maxY - minY;
     }
 
     public void setTiles()
@@ -794,7 +823,7 @@ public class Room
                         break;
                     case TileType.exDoubleTopAngleTile:
                         current.tileType = TileType.botBorderTopAnglesTile;
-                        break;                    
+                        break;
                     case TileType.rightBorderTopAngleTile:
                         current.tileType = TileType.botDxangleAndAngleTile;
                         break;
@@ -828,7 +857,7 @@ public class Room
         for (int i = 0; i < vertices.Count; i++)
             vertices[i] = new Vector2(vertices[i].x + (x * shiftAmount), vertices[i].y + (y * shiftAmount));
 
-        calcPivot();
+        //calcPivot();
         calcArea();
     }
 
@@ -837,17 +866,17 @@ public class Room
 
     }
 
-    public void calcPivot()
-    {
-        float sumX = 0, sumY = 0;
-        foreach (Vector2 v in vertices)
-        {
-            sumX += v.x;
-            sumY += v.y;
-        }
+    //public void calcPivot()
+    //{
+    //    float sumX = 0, sumY = 0;
+    //    foreach (Vector2 v in vertices)
+    //    {
+    //        sumX += v.x;
+    //        sumY += v.y;
+    //    }
 
-        pivot = new Vector2(sumX / vertices.Count, sumY / vertices.Count);
-    }
+    //    pivot = new Vector2(sumX / vertices.Count, sumY / vertices.Count);
+    //}
 
     public void addQuad(int direction)
     {
