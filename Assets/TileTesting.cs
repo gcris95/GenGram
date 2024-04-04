@@ -121,9 +121,9 @@ public enum TileType : int
     #endregion
 
     uUpTile = 43,
-    uBotTile = 44,
-    uLeftTile = 45,
-    uRightTile = 46
+    uLeftTile = 44,
+    uRightTile = 45,
+    uBotTile = 46
 }
 
 public class TileSetting : MonoBehaviour
@@ -352,7 +352,7 @@ public class TileSetting : MonoBehaviour
             for (int j = 0; j < 4; j++)
             {
                 Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(quadPosition.x + x, quadPosition.y + y));
-                if (indeces[cont] != 7)
+                if (indeces[cont] == 6)
                     tilemap.SetTile(cellPosition, tiles[indeces[cont]]);
                 else
                     collTilemap.SetTile(cellPosition, tiles[indeces[cont]]);

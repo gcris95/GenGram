@@ -375,10 +375,18 @@ public class Room
         Quad first = current;
 
         int direction = 1;
-        int cont = 0;
+        bool passedFirst = false;
+        bool exit = false;
+        bool passedSecond = false;
 
-        while (cont < 3 || current != first)
+        Debug.Log("Room: " + id);
+        Debug.Log("First: " + first.x + " " + first.y);
+
+        while (!exit)
         {
+            if (current == first && passedFirst)
+                passedSecond = true;
+
             if (direction == 0)
             {
                 if (current.left != null)
@@ -397,7 +405,7 @@ public class Room
                             break;
                         // Se la tile ha già l'angolo in basso a sinistra
                         case TileType.exTopDxangleTile:
-                            current.tileType = TileType.exDoubleTopRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
+                            current.tileType = TileType.exDoubleBotRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
                             break;
                         // Se la tile ha già l'angolo in basso a destra 
                         case TileType.exTopSxangleTile:
@@ -450,11 +458,20 @@ public class Room
                     case TileType.floorTile:
                         current.tileType = TileType.sxBorderTile;
                         break;
+                    case TileType.topBorderTile:
+                        current.tileType = TileType.topSxangleTile;
+                        break;
                     case TileType.botBorderTile:
                         current.tileType = TileType.botSxangleTile;
                         break;
+                    case TileType.topbotborder:
+                        current.tileType = TileType.uRightTile;
+                        break;
                     case TileType.botDxangleTile:
                         current.tileType = TileType.uUpTile;
+                        break;
+                    case TileType.topDxangleTile:
+                        current.tileType = TileType.uBotTile;
                         break;
                     case TileType.exTopDxangleTile:
                         current.tileType = TileType.leftBorderTopAngleTile;
@@ -478,7 +495,9 @@ public class Room
                     direction = 1;
                     continue;
                 }
-                cont++;
+                if (passedSecond)
+                    exit = true;
+                passedFirst = true;
                 current = current.up;
             }
             else if (direction == 1)
@@ -545,7 +564,7 @@ public class Room
 
                     current = current.up;
                     continue;
-                }                
+                }
 
                 switch (current.tileType)
                 {
@@ -556,7 +575,7 @@ public class Room
                         current.tileType = TileType.topSxangleTile;
                         break;
                     case TileType.botSxangleTile:
-                        current.tileType = TileType.uLeftTile;
+                        current.tileType = TileType.uRightTile;
                         break;
                     case TileType.exTopSxangleTile:
                         current.tileType = TileType.rightBorderTopAngleTile;
@@ -580,8 +599,9 @@ public class Room
                     direction = 2;
                     continue;
                 }
-
-                cont++;
+                if (passedSecond)
+                    exit = true;
+                passedFirst = true;
                 current = current.right;
 
             }
@@ -660,7 +680,7 @@ public class Room
                         current.tileType = TileType.topDxangleTile;
                         break;
                     case TileType.topSxangleTile:
-                        current.tileType = TileType.uRightTile;
+                        current.tileType = TileType.uBotTile;
                         break;
                     case TileType.exTopSxangleTile:
                         current.tileType = TileType.rightBorderTopAngleTile;
@@ -684,7 +704,9 @@ public class Room
                     direction = 3;
                     continue;
                 }
-                cont++;
+                if (passedSecond)
+                    exit = true;
+                passedFirst = true;
                 current = current.down;
             }
             else
@@ -762,7 +784,7 @@ public class Room
                         current.tileType = TileType.botDxangleTile;
                         break;
                     case TileType.topDxangleTile:
-                        current.tileType = TileType.uBotTile;
+                        current.tileType = TileType.uLeftTile;
                         break;
                     case TileType.exTopSxangleTile:
                         current.tileType = TileType.botBorderLeftAngleTile;
@@ -772,7 +794,7 @@ public class Room
                         break;
                     case TileType.exDoubleTopAngleTile:
                         current.tileType = TileType.botBorderTopAnglesTile;
-                        break;
+                        break;                    
                     case TileType.rightBorderTopAngleTile:
                         current.tileType = TileType.botDxangleAndAngleTile;
                         break;
@@ -786,10 +808,14 @@ public class Room
                     direction = 0;
                     continue;
                 }
-                cont++;
+                if (passedSecond)
+                    exit = true;
+                passedFirst = true;
                 current = current.left;
             }
         }
+
+
     }
 
     public void calcArea()
