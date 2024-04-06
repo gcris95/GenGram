@@ -6,9 +6,12 @@ using UnityEngine;
 public class Chromosome
 {
     public int[] genes;
-    public float fitness;
+    public float fitness = -1;
     public float mutationRate;
     public int mutations = 0;
+
+    public List<Chromosome> dominated;
+    public int dominationCount = 0;
 
 
     public Chromosome(int length, float mutationRate, bool initialize = true)

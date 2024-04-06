@@ -33,16 +33,17 @@ public class Generator : MonoBehaviour
 
         do
         {
-            //bestGraph = null;
-
             for (int i = 0; i < maps.population.Length; i++)
             {
-                g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+                if (maps.population[i].fitness != -1)
+                {
+                    g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
 
-                g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+                    g.chromosome.calcFitness(g, settings, fitnessData, mapData);
 
-                if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
-                    bestGraph = g;
+                    if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
+                        bestGraph = g;
+                }                
             }
 
             Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
@@ -51,7 +52,6 @@ public class Generator : MonoBehaviour
                 break;
 
             maps.newGeneration();
-
 
             yield return null;
         }
