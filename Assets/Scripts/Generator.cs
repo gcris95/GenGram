@@ -75,21 +75,22 @@ public class Generator : MonoBehaviour
 
         //addTiles();
 
+        Debug.Log("GENERAZIONI: " + maps.generations);
         Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
-        Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
+        //Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
         Debug.Log("Punteggio size: " + bestGraph.sizeFitness);
-        Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
-        Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
-        Debug.Log("minX: " + bestGraph.minX);
-        Debug.Log("maxX: " + bestGraph.maxX);
-        Debug.Log("minY: " + bestGraph.minY);
-        Debug.Log("maxY: " + bestGraph.maxY);
-        Debug.Log("ROW: " + bestGraph.rows);
-        Debug.Log("COLS: " + bestGraph.cols);
-        Debug.Log("ROOM PER ROW: " + bestGraph.roomPerRow);
-        Debug.Log("ROOM PER COL: " + bestGraph.roomPerCol);
-        Debug.Log("RATIO: " + bestGraph.ratio);
-        Debug.Log("malus connection: " + bestGraph.malus);
+        //Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
+        //Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
+        //Debug.Log("minX: " + bestGraph.minX);
+        //Debug.Log("maxX: " + bestGraph.maxX);
+        //Debug.Log("minY: " + bestGraph.minY);
+        //Debug.Log("maxY: " + bestGraph.maxY);
+        //Debug.Log("ROW: " + bestGraph.rows);
+        //Debug.Log("COLS: " + bestGraph.cols);
+        //Debug.Log("ROOM PER ROW: " + bestGraph.roomPerRow);
+        //Debug.Log("ROOM PER COL: " + bestGraph.roomPerCol);
+        //Debug.Log("RATIO: " + bestGraph.ratio);
+        //Debug.Log("malus connection: " + bestGraph.malus);
 
         DataLogger.log(settings, bestGraph, time, maps.generations);
     }
@@ -313,41 +314,43 @@ public class Generator : MonoBehaviour
         }
     }
 
-    //public void OnDrawGizmos()
-    //{
-    //    if (bestGraph == null)
-    //        return;
-    //    bool[][] matrix;
+    public void OnDrawGizmos()
+    {
+        if (bestGraph == null)
+            return;
+        bool[][] matrix;
 
-    //    matrix = bestGraph.matrix;
+        matrix = bestGraph.matrix;
 
-    //    Room[] rooms = bestGraph.rooms;
+        Room[] rooms = bestGraph.rooms;
 
-    //    //Color[] colors = new Color[] { Color.white, Color.blue, Color.red, Color.green, Color.cyan, Color.yellow, Color.magenta };
-    //    Gizmos.color = Color.green;
+        //Color[] colors = new Color[] { Color.white, Color.blue, Color.red, Color.green, Color.cyan, Color.yellow, Color.magenta };
+        Gizmos.color = Color.green;
 
-    //    for (int j = 0; j < rooms.Length; j++)
-    //    {
-    //        //if (j == 0)
-    //        //    Gizmos.color = Color.blue;
-    //        //else if (j == bestGraph.lastRoomId)
-    //        //    Gizmos.color = Color.red;
-    //        //else
-    //        //    Gizmos.color = Color.green;
-    //        // Draw rooms
-    //        for (int i = 0; i < rooms[j].vertices.Count - 1; i++)
-    //            Gizmos.DrawLine(rooms[j].vertices[i], rooms[j].vertices[i + 1]);
-    //        Gizmos.DrawLine(rooms[j].vertices[rooms[j].vertices.Count - 1], rooms[j].vertices[0]);
-    //        //Gizmos.color = colors[bestGraph.distances[rooms[j].id] % 7];
-    //        //Gizmos.DrawCube(rooms[j].pivot, Vector3.one * 3f);
-    //    }
+        for (int j = 0; j < rooms.Length; j++)
+        {
+            if (j == 0)
+                Gizmos.color = Color.blue;
+            else if (j == bestGraph.lastRoomId)
+                Gizmos.color = Color.red;
+            else
+                Gizmos.color = Color.green;
 
-    //    //Gizmos.color = Color.white;
+            Gizmos.DrawCube(rooms[j].quads[0].pivot, Vector3.one * 3f);
 
-    //    //for (int i = 0; i < rooms.Length; i++)
-    //    //    for (int j = 0; j < rooms.Length; j++)
-    //    //        if (matrix[i][j])
-    //    //            Gizmos.DrawLine(rooms[i].pivot, rooms[j].pivot);
+            // Draw rooms
+            //for (int i = 0; i < rooms[j].vertices.Count - 1; i++)
+            //    Gizmos.DrawLine(rooms[j].vertices[i], rooms[j].vertices[i + 1]);
+            //Gizmos.DrawLine(rooms[j].vertices[rooms[j].vertices.Count - 1], rooms[j].vertices[0]);
+            //Gizmos.color = colors[bestGraph.distances[rooms[j].id] % 7];
+        }
 
-    //}
+        //Gizmos.color = Color.white;
+
+        //for (int i = 0; i < rooms.Length; i++)
+        //    for (int j = 0; j < rooms.Length; j++)
+        //        if (matrix[i][j])
+        //            Gizmos.DrawLine(rooms[i].pivot, rooms[j].pivot);
+
+    }
 }

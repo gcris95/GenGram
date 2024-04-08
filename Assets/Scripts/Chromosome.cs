@@ -141,7 +141,7 @@ public class Chromosome
     {
         Room[] rooms = g.rooms;
 
-        float malus = 0;
+        float malus;
         float mean;
         float diff;
 
@@ -183,14 +183,15 @@ public class Chromosome
         #endregion
 
         malus = 0;
+        float x;
         for (int i = 0; i < rooms.Length; i++)
         {
+            x = Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
             //if (i != lastRoom)
-            malus += Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
+            malus += rooms[i].quads.Count < 5 ? x : x / 32 ;
         }
 
-
-        malus /= (rooms.Length);
+        malus /= rooms.Length;
 
         float sizeFitness = 1 / (malus + 1);
 
@@ -213,20 +214,6 @@ public class Chromosome
         mapData.roomsNumber = rooms.Length;
 
         //Debug.Log("Points " + malus + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
-
-        #endregion
-
-        #region Height/Width ratio         
-
-        malus = 0;
-        foreach (Room room in rooms)
-            malus += Mathf.Abs(room.height / room.width - settings.hwRatio);
-
-        malus /= rooms.Length;
-
-        float hwFitness = 1 / (malus + 1);
-
-        fitData.HeightWidthPoints = malus;
 
         #endregion
 
@@ -267,16 +254,19 @@ public class Chromosome
 
         #endregion
 
+        #region Height/Width ratio         
 
-        //#region Final room size
+        malus = 0;
+        foreach (Room room in rooms)
+            malus += Mathf.Abs(room.height / room.width - settings.hwRatio);
 
-        //malus = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
+        malus /= rooms.Length;
 
-        //float finalRoomFitness = 1 / (malus + 1);
+        float hwFitness = 1 / (malus + 1);
 
-        //fitData.FinalRoomSizePoints = finalRoomFitness;
+        fitData.HeightWidthPoints = malus;
 
-        //#endregion        
+        #endregion       
 
         g.roomsFitness = roomsFitness;
         g.sizeFitness = sizeFitness;
@@ -289,27 +279,7 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        roomsFitness *= /*settings.roomNumberWeight*/ 0.33f;
-        sizeFitness *= /*settings.sizeWeight*/ 0.34f;
-        distanceFitness *= /*settings.distanceWeight*/ 0.33f;
-        connectionFitness *= /*settings.connectionWeight*/ 0.25f;
-        hwFitness *= /*settings.hwRatioWeight*/ 0.2f;
-
-        fitness = roomsFitness + distanceFitness + sizeFitness /*+*/ /*connectionFitness*/ /*+ hwFitness*/;
-
-        //#region Extra room number
-
-        //mean = (settings.maxExtraRooms + settings.minExtraRooms) / 2;
-        //diff = (settings.maxExtraRooms - mean);
-
-        //points = Mathf.Max(Mathf.Abs((rooms.Length - dist) - mean) - diff, 0);
-
-        //antiFitness += points * settings.extraRoomWeight;
-
-        //fitData.ExtraRoomPoints = points;
-        //mapData.extraRoomsNumber = rooms.Length - dist;
-
-        //#endregion
+        fitness = (roomsFitness + sizeFitness + distanceFitness) / 3 /*+ connectionFitness + hwFitness*/;        
 
         #region Shape Variance TODO
 

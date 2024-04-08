@@ -408,8 +408,8 @@ public class Room
         bool exit = false;
         bool passedSecond = false;
 
-        Debug.Log("Room: " + id);
-        Debug.Log("First: " + first.x + " " + first.y);
+        //Debug.Log("Room: " + id);
+        //Debug.Log("First: " + first.x + " " + first.y);
 
         while (!exit)
         {
@@ -1002,7 +1002,7 @@ public class Room
     public void show(float shiftAmount, Graph g, TileSetting ts)
     {
         GameObject room = new GameObject("Room " + id);
-        RoomMono r = room.AddComponent<RoomMono>();
+        RoomInfoDisplay r = room.AddComponent<RoomInfoDisplay>();
 
         r.id = id;
         r.width = width;
