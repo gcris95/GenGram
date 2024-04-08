@@ -1,23 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Chromosome
 {
     public int[] genes;
-    public float fitness = -1;
     public float mutationRate;
     public int mutations = 0;
 
+    public float fitness = -1;
+    public float[] fitnesses;
     public List<Chromosome> dominated;
     public int dominationCount = 0;
-
+    public float crowdingDistance = 0;
 
     public Chromosome(int length, float mutationRate, bool initialize = true)
     {
         genes = new int[length];
+        fitnesses = new float[1];
         this.mutationRate = mutationRate;
+        dominated = new List<Chromosome>();
 
         if (initialize)
             randomGenes();
@@ -36,7 +40,6 @@ public class Chromosome
         {
             genes[i] = Random.Range(0, 6);
             genes[i + 1] = Random.Range(0, 4);
-            //genes[i + 1] = 1;
             genes[i + 2] = Random.Range(0, 2);
             genes[i + 3] = Random.Range(0, 2);
             genes[i + 4] = Random.Range(0, 2);
@@ -215,8 +218,6 @@ public class Chromosome
         fitData.roomNumberPoints = malus;
         mapData.roomsNumber = rooms.Length;
 
-        //Debug.Log("Points " + malus + " rooms: " + rooms.Length + " calcolo: " + (Mathf.Abs(rooms.Length - mean) - diff));
-
         #endregion
 
         #region Height/Width ratio         
@@ -270,17 +271,6 @@ public class Chromosome
 
         #endregion
 
-
-        //#region Final room size
-
-        //malus = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
-
-        //float finalRoomFitness = 1 / (malus + 1);
-
-        //fitData.FinalRoomSizePoints = finalRoomFitness;
-
-        //#endregion        
-
         g.roomsFitness = roomsFitness;
         g.sizeFitness = sizeFitness;
         g.distanceFitness = distanceFitness;
@@ -292,13 +282,31 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        roomsFitness *= /*settings.roomNumberWeight*/ 0.33f;
-        sizeFitness *= /*settings.sizeWeight*/ 0.34f;
-        distanceFitness *= /*settings.distanceWeight*/ 0.33f;
+        roomsFitness *= /*settings.roomNumberWeight*/ 0.25f;
+        sizeFitness *= /*settings.sizeWeight*/ 0.25f;
+        distanceFitness *= /*settings.distanceWeight*/ 0.25f;
         connectionFitness *= /*settings.connectionWeight*/ 0.25f;
         hwFitness *= /*settings.hwRatioWeight*/ 0.2f;
 
-        fitness = roomsFitness + distanceFitness + sizeFitness /*+*/ /*connectionFitness*/ /*+ hwFitness*/;
+        fitness = roomsFitness + distanceFitness + sizeFitness + connectionFitness /*+ hwFitness*/;
+
+        //fitnesses[0] = fitData.roomNumberPoints;
+        //fitnesses[1] = fitData.ConnectionPerRoomPoints;
+        //fitnesses[2] = fitData.FirstLastDistancePoints;
+        //fitnesses[3] = fitData.roomSizePoints;
+        fitnesses[0] = fitness;
+
+
+        #region extra
+        //#region Final room size
+
+        //malus = Mathf.Abs(settings.finalRoomSize - rooms[lastRoom].area);
+
+        //float finalRoomFitness = 1 / (malus + 1);
+
+        //fitData.FinalRoomSizePoints = finalRoomFitness;
+
+        //#endregion        
 
         //#region Extra room number
 
@@ -321,6 +329,8 @@ public class Chromosome
 
         fitData.ShapeVariancePoints = malus;
         mapData.shapeVariance = 0; // TODO
+        #endregion
+
         #endregion
 
 

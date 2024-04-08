@@ -8,7 +8,6 @@ using Color = UnityEngine.Color;
 public class Generator : MonoBehaviour
 {
     public GenerationSettings settings;
-    public bool testing;
     Graph g;
     Graph bestGraph;
     Population maps;
@@ -23,6 +22,7 @@ public class Generator : MonoBehaviour
 
     private IEnumerator generation()
     {
+        bool finished = false;
         float time = Time.time;
 
         int chromosomeLength = 4 + settings.rulesNumber * 6;
@@ -31,31 +31,72 @@ public class Generator : MonoBehaviour
         FitnessData fitnessData = new FitnessData();
         MapData mapData = new MapData();
 
-        do
+        for (int i = 0; i < maps.population.Length; i++)
         {
-            for (int i = 0; i < maps.population.Length; i++)
+            g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+
+            g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+
+            if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
+                bestGraph = g;
+        }
+
+        if (bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
+            finished = true;
+
+        float previousFitness = 0;
+
+        while (!finished)
+        {
+            maps.calcAverageFitness();
+
+            if (Mathf.Abs(maps.averagefitness - previousFitness) < 0.1)
             {
-                if (maps.population[i].fitness != -1)
+                maps.reinit();
+
+                for (int i = 0; i < maps.population.Length; i++)
                 {
-                    g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+                    if (maps.population[i].fitness != -1)
+                    {
+                        g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
 
-                    g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+                        g.chromosome.calcFitness(g, settings, fitnessData, mapData);
 
-                    if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
-                        bestGraph = g;
-                }                
+                        if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
+                            bestGraph = g;
+                    }
+                }
+
+                maps.calcAverageFitness();
             }
+
+            previousFitness = maps.averagefitness;
+
+            maps.generateOffspring();
 
             Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
 
-            if (testing || bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
-                break;
+            for (int i = 0; i < maps.offspring.Length; i++)
+            {
+                g = ShapeGrammar.generate(maps.offspring[i], settings.quadSize);
 
-            maps.newGeneration();
+                g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+
+                if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
+                    bestGraph = g;
+            }
+
+            if (bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold || maps.generations > settings.maxGenerations)
+                finished = true;
+            else
+                maps.getNextPopulation();
+
 
             yield return null;
         }
-        while (maps.generations < settings.maxGenerations);
+
+        Debug.Log("Best: " + bestGraph.chromosome.fitness);
+        Debug.Log("Generations: " + maps.generations);
 
         //Debug.Log("--------------MATRIX--------------");
         //for (int i = 0; i < bestGraph.rooms.Length; i++)
@@ -64,16 +105,12 @@ public class Generator : MonoBehaviour
         //Debug.Log("Best last: " + bestGraph.lastRoomId);
         //Debug.Log("Best lastconnection: " + bestGraph.getConnections(bestGraph.lastRoomId).Count);
 
-        
-
         time = Time.time - time;
 
-        //createCorridors();
+        createCorridors();
 
         foreach (Room r in bestGraph.rooms)
             r.show(bestGraph.shiftAmount, bestGraph, ts);
-
-        //addTiles();
 
         Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
         Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);

@@ -408,8 +408,8 @@ public class Room
         bool exit = false;
         bool passedSecond = false;
 
-        Debug.Log("Room: " + id);
-        Debug.Log("First: " + first.x + " " + first.y);
+        //Debug.Log("Room: " + id);
+        //Debug.Log("First: " + first.x + " " + first.y);
 
         while (!exit)
         {

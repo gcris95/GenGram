@@ -12,9 +12,10 @@ public class Population
     public Chromosome[] population;
     public Chromosome[] offspring;
     public int generations = 1;
+    public float averagefitness = 0;
     private int tournamentSize = 5;
     private Chromosome[] matingPool;       // Indici dei cromosomi tra cui fare il crossover
-    private int elitism;
+
 
     public Population(GenerationSettings settings, int chromosomeLength)
     {
@@ -22,31 +23,44 @@ public class Population
         offspring = new Chromosome[settings.populationSize];
         matingPool = new Chromosome[settings.populationSize];
         tournamentSize = settings.tournamentSize;
-        elitism = settings.elitism;
 
         for (int i = 0; i < settings.populationSize; i++)
             population[i] = new Chromosome(chromosomeLength, settings.mutationRate);
     }
 
-    public void newGeneration()
+    public void generateOffspring()
     {
         selection();
         crossover();
         mutation();
-        nonDominatedSorting();
-
-        generations++;
     }
 
     /// <summary>
-    /// Perform a non dominated sorting calculating pareto frontiers of the population R = P U Q
-    /// where P is the Population at time t and Q is the offspring after the crossover
+    /// Get the next population performing NSGA-II
     /// </summary>
-    public void nonDominatedSorting()
+    public void getNextPopulation()
     {
+        generations++;
         List<List<Chromosome>> frontiers = new List<List<Chromosome>>();
         List<Chromosome> R = new List<Chromosome>(population);
         R.AddRange(offspring);
+
+        int i;
+
+        //for (i = 0; i < population.Length; i++)
+        //{
+        //    Debug.Log("Pop: " + string.Join(", ", population[i].fitness));
+        //}
+
+        //for (i = 0; i < offspring.Length; i++)
+        //{
+        //    Debug.Log("Off: " + string.Join(", ", offspring[i].fitness));
+        //}
+
+        //for (i = 0; i < R.Count; i++)
+        //{
+        //    Debug.Log("R: " + string.Join(", ", R[i].fitness));
+        //}
 
         #region sorting
         //int cont = 0; // Numero di cromosomi inseriti
@@ -119,7 +133,8 @@ public class Population
         foreach (Chromosome c in R)
         {
             c.dominationCount = 0;
-            c.dominated = new List<Chromosome>();
+            if (c.dominated.Count > 0)
+                c.dominated.Clear();
 
             foreach (Chromosome q in R)
             {
@@ -137,12 +152,14 @@ public class Population
             }
         }
 
+
+
         fronts.Add(firstFront);
-        int i = 0;
+        i = 0;
         bool exit = false;
         List<Chromosome> nextFront;
 
-        while (!exit && cont < population.Length)
+        while (!exit)
         {
             nextFront = new List<Chromosome>();
 
@@ -171,39 +188,86 @@ public class Population
 
         #endregion
 
+        //for (i = 0; i < fronts.Count; i++)
+        //{
+        //    Debug.Log("----------------------------------------------------------");
+        //    Debug.Log("Front " + i);
+        //    for (int j = 0; j < fronts[i].Count; j++)
+        //    {
+        //        Debug.Log("Elemento " + j);
+        //        for (int k = 0; k < fronts[i][j].fitnesses.Length; k++)
+        //        {
+        //            Debug.Log(fronts[i][j].fitnesses[k]);
+        //        }
+
+        //    }
+        //}
+
+
         i = 0;
 
-        #region Crowding Distance
+        #region New Population
+
+        Debug.Log("Fronts: " + fronts.Count);
+        for (int j = 0; j < fronts.Count; j++)
+        {
+            Debug.Log("Front: " + j + ": " + fronts[j].Count);
+        }
 
         foreach (List<Chromosome> front in fronts)
         {
-            if (front.Count == 1)
+            if (front.Count <= 2)
             {
-                population[i] = front[0];
-                i++;
-            }
-            else if (front.Count == 2)
-            {
-                population[i] = front[0];
-                if (i < population.Length - 1)
-                    population[i + 1] = front[1];
-
-                i += 2;
+                for (int j = 0; j < front.Count; j++)
+                {
+                    if (i >= population.Length)
+                        break;
+                    population[i] = front[j];
+                    i++;
+                }
             }
             else
             {
-                crowdingDistance(front);
+                crowdingDistance(front, R);
                 for (int j = 0; j < front.Count; j++)
                 {
-                    population[i] = front[j];
-                    i++;
                     if (i >= population.Length)
                         break;
+                    population[i] = front[j];
+                    i++;
                 }
             }
         }
 
+        Debug.Log("i: " + i);
+
         #endregion
+
+        for (i = 0; i < population.Length; i++)
+            Debug.Log("NUOVA POP: " + string.Join(", ", population[i].fitness));
+
+        Debug.Log("---------------------------");
+    }
+
+
+    public void calcAverageFitness()
+    {
+        averagefitness = 0;
+        foreach (Chromosome c in population)
+        {
+            averagefitness += c.fitness;
+        }
+
+        averagefitness /= population.Length;
+    }
+
+    public void reinit()
+    {
+        for (int i = 0; i < population.Length; i++)
+        {
+            if (i % 2 == 0)
+                population[i] = new Chromosome(population[i].genes.Length, population[i].mutationRate);
+        }
     }
 
     /// <summary>
@@ -214,32 +278,78 @@ public class Population
     /// <returns>1 if A dominates B, -1 if B dominates A, 0 otherwise</returns>
     private int dominates(Chromosome a, Chromosome b)
     {
-        if (a.fitness1 < b.fitness1 && a.fitness2 < b.fitness2)
-            return 1;
+        bool better = false;
+        bool worst = false;
 
-        if (a.fitness1 > b.fitness1 && a.fitness2 > b.fitness2)
-            return -1;
+        for (int i = 0; i < a.fitnesses.Length; i++)
+        {
+            if (a.fitnesses[i] < b.fitnesses[i])
+                worst = true;
+
+            if (a.fitnesses[i] > b.fitnesses[i])
+                better = true;
+        }
+
+        if (better && !worst) return 1;
+
+        if (worst && !better) return -1;
 
         return 0;
+
+
+
+        //if (a.fitness1 < b.fitness1 && a.fitness2 < b.fitness2)
+        //    return 1;
+
+        //if (a.fitness1 > b.fitness1 && a.fitness2 > b.fitness2)
+        //    return -1;
+
+        //return 0;
     }
 
     /// <summary>
-    /// Calculate crowding distance in a certain pareto frontier and sort it based on it  
+    /// Calculate crowding distance in a certain pareto front and sort it based on it  
     /// </summary>
-    /// <param name="frontier">The front of which calculate the crowding distance to</param>
-    public void crowdingDistance(List<Chromosome> frontier)
+    /// <param name="front">The front of which calculate the crowding distance to</param>
+    public void crowdingDistance(List<Chromosome> front, List<Chromosome> R)
     {
-        for (int i = 0; i < frontier[0].Objectives.Length; i++)
+        if (front.Count == 0)
+            return;
+
+        foreach (Chromosome c in front)
+            c.crowdingDistance = 0;
+
+        float min = -1;
+        float max = -1;
+
+        for (int i = 0; i < front[0].fitnesses.Length; i++)
         {
-            frontier.Sort((a, b) => a.fitness.CompareTo(b.fitness));
+            min = -1;
+            max = -1;
+            front.Sort((a, b) => a.fitnesses[i].CompareTo(b.fitnesses[i]));
 
-            frontier[0].CrowdingDistance = frontier[size - 1].CrowdingDistance = Double.PositiveInfinity;
+            front[0].crowdingDistance = front[front.Count - 1].crowdingDistance = float.MaxValue;
 
-            for (int j = 1; j < size - 1; j++)
+            for (int k = 0; k < R.Count; k++)
             {
-                front[j].CrowdingDistance += (front[j + 1].Objectives[i] - front[j - 1].Objectives[i]);
+                if (min == -1 || R[k].fitnesses[i] < min)
+                {
+                    min = R[k].fitnesses[i];
+                }
+                if (max == -1 || R[k].fitnesses[i] > max)
+                {
+                    max = R[k].fitnesses[i];
+                }
+            }
+
+            for (int j = 1; j < front.Count - 1; j++)
+            {
+                if (front[j].crowdingDistance < float.MaxValue)
+                    front[j].crowdingDistance += (front[j + 1].fitnesses[i] - front[j - 1].fitnesses[i]) / (max - min); // Possibile miglioramento utilizzando j invece di j-1: https://arxiv.org/ftp/arxiv/papers/1811/1811.12667.pdf
             }
         }
+
+        front.Sort((a, b) => a.crowdingDistance.CompareTo(b.crowdingDistance));
     }
 
     private void selection()
@@ -247,7 +357,7 @@ public class Population
         List<Chromosome> populationCopy = new List<Chromosome>(population);
         System.Random rnd = new System.Random();
 
-        Chromosome winner = null;
+        int winner = -1;
         int index = 0;
 
         for (int i = 0; i < population.Length; i++)
@@ -255,13 +365,13 @@ public class Population
             for (int j = 0; j < tournamentSize; j++)
             {
                 index = rnd.Next(populationCopy.Count);
-                if (winner == null || populationCopy[index].fitness > winner.fitness)
-                    winner = populationCopy[index];
+                if (winner == -1 || index < winner)
+                    winner = index;
                 populationCopy.RemoveAt(index);
             }
-            matingPool[i] = winner;
+            matingPool[i] = population[winner];
             populationCopy = new List<Chromosome>(population);
-            winner = null;
+            winner = -1;
         }
 
         //Debug.Log("---------------------------------------SELECTION---------------------------------------");
@@ -289,14 +399,5 @@ public class Population
     {
         for (int i = 0; i < offspring.Length; i++)
             offspring[i].mutate();
-    }
-
-    public void orderPopulation()
-    {
-        Array.Sort(population, delegate (Chromosome x, Chromosome y) { return x.fitness.CompareTo(y.fitness); });
-
-        //for (int i = 0; i < population.Length; ++i)
-        //    Debug.Log("Cromosomi dopo ordinamento: " + string.Join(", ", population[i].fitness));
-
     }
 }
