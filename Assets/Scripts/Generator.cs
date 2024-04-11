@@ -80,7 +80,7 @@ public class Generator : MonoBehaviour
         //Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
         Debug.Log("Punteggio size: " + bestGraph.sizeFitness);
         //Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
-        //Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
+        Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
         //Debug.Log("minX: " + bestGraph.minX);
         //Debug.Log("maxX: " + bestGraph.maxX);
         //Debug.Log("minY: " + bestGraph.minY);

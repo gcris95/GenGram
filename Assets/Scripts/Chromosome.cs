@@ -8,8 +8,7 @@ public class Chromosome
     public int[] genes;
     public float fitness;
     public float mutationRate;
-    public int mutations = 0;
-
+    public int mutations = 0;   
 
     public Chromosome(int length, float mutationRate, bool initialize = true)
     {
@@ -188,7 +187,7 @@ public class Chromosome
         {
             x = Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
             //if (i != lastRoom)
-            malus += rooms[i].quads.Count < 5 ? x : x / 32 ;
+            malus += rooms[i].quads.Count < 5 ? x : Mathf.Pow(x / 32, 2);
         }
 
         malus /= rooms.Length;
@@ -279,7 +278,9 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        fitness = (roomsFitness + sizeFitness + distanceFitness) / 3 /*+ connectionFitness + hwFitness*/;        
+
+
+        fitness = (roomsFitness + sizeFitness + distanceFitness) / 3 /*+ connectionFitness*/;
 
         #region Shape Variance TODO
 
