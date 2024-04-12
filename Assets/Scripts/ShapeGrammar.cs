@@ -54,7 +54,7 @@ public class ShapeGrammar
         }
 
         foreach (Room r in list)
-            r.shiftRoom(shiftamount * 1.5f + 1);
+            r.shiftRoom(shiftamount + 1);
 
 
         Graph g = new Graph(list.ToArray(), c, shiftamount * 1.5f + 1, minX, maxX, minY, maxY);

@@ -4,33 +4,19 @@ using UnityEngine;
 
 public class RoomInfoDisplay : MonoBehaviour
 {
-    [HideInInspector]
     public int id;
-    [HideInInspector]
     public float height;
-    [HideInInspector]
     public float width;
-    [HideInInspector]
     public float hwRatio;
-    [HideInInspector]
     public int connections;
-    [HideInInspector]
     public float area;
 
-    [HideInInspector]
     public int x;
-    [HideInInspector]
     public int y;
 
-    private void Awake()
-    {
-        
-
-    }
-
-    private void OnMouseOver()
-    {
-
-    }
+    public Vector2 upperQuad;
+    public Vector2 leftQuad;
+    public Vector2 rightQuad;
+    public Vector2 bottomQuad;
 
 }

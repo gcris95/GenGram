@@ -33,7 +33,7 @@ public class Generator : MonoBehaviour
 
         do
         {
-            //bestGraph = null;
+            bestGraph = null;
 
             for (int i = 0; i < maps.population.Length; i++)
             {
@@ -64,22 +64,20 @@ public class Generator : MonoBehaviour
         //Debug.Log("Best last: " + bestGraph.lastRoomId);
         //Debug.Log("Best lastconnection: " + bestGraph.getConnections(bestGraph.lastRoomId).Count);
 
-        
+
 
         time = Time.time - time;
 
-        //createCorridors();
 
         foreach (Room r in bestGraph.rooms)
             r.show(bestGraph.shiftAmount, bestGraph, ts);
-
-        //addTiles();
+        createCorridors();
 
         Debug.Log("GENERAZIONI: " + maps.generations);
         Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
-        //Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
+        Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
         Debug.Log("Punteggio size: " + bestGraph.sizeFitness);
-        //Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
+        Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
         Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
         //Debug.Log("minX: " + bestGraph.minX);
         //Debug.Log("maxX: " + bestGraph.maxX);
@@ -105,7 +103,7 @@ public class Generator : MonoBehaviour
         GameObject go;
 
         int x = 0;
-
+        int y = 0;
         bool[] visited = new bool[rooms.Length];
 
         foreach (Room room in rooms)
@@ -113,6 +111,8 @@ public class Generator : MonoBehaviour
 
         for (int i = 0; i < rooms.Length; i++)
         {
+            Debug.Log(rooms[i].id + " Pivot: " + rooms[i].quads[0].pivot);
+            y++;
             if (rooms[i].up != null && !visited[rooms[i].up.id] && matrix[i][rooms[i].up.id])
             {
                 pivot1 = rooms[i].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
@@ -124,37 +124,20 @@ public class Generator : MonoBehaviour
                     go.transform.position = pivot1;
                     go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                     go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                     go.transform.position = pivot2;
                     go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                     go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.right;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.right;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.left;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.left;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     pivot1 += Vector2.up;
                     pivot2 += Vector2.down;
                     x++;
                 }
                 go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.name = "" + y;
                 go.transform.position = pivot1;
                 go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                 go.transform.parent = corridors.transform;
@@ -171,37 +154,20 @@ public class Generator : MonoBehaviour
                     go.transform.position = pivot1;
                     go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                     go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                     go.transform.position = pivot2;
                     go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                     go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.up;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.up;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.down;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.down;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     pivot1 = pivot1 + Vector2.right;
                     pivot2 = pivot2 + Vector2.left;
                     x++;
                 }
                 go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.name = "" + y;
                 go.transform.position = pivot1;
                 go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                 go.transform.parent = corridors.transform;
@@ -217,37 +183,21 @@ public class Generator : MonoBehaviour
                     go.transform.position = pivot1;
                     go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                     go.transform.parent = corridors.transform;
+                    go.name = "" + y;
+
 
                     go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                     go.transform.position = pivot2;
                     go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                     go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.right;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.right;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.left;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.left;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     pivot1 = pivot1 + Vector2.down;
                     pivot2 = pivot2 + Vector2.up;
                     x++;
                 }
                 go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.name = "" + y;
                 go.transform.position = pivot1;
                 go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
                 go.transform.parent = corridors.transform;
@@ -263,54 +213,26 @@ public class Generator : MonoBehaviour
                     go.transform.position = pivot1;
                     go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                     go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                     go.transform.position = pivot2;
                     go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                     go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.up;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.up;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot1 + Vector2.down;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
-
-                    //go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    //go.transform.position = pivot2 + Vector2.down;
-                    //go.transform.localScale = Vector2.one;
-                    //go.transform.parent = corridors.transform;
+                    go.name = "" + y;
 
                     pivot1 = pivot1 + Vector2.left;
                     pivot2 = pivot2 + Vector2.right;
                     x++;
                 }
                 go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.name = "" + y;
                 go.transform.position = pivot1;
                 go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
                 go.transform.parent = corridors.transform;
-                x = 0;
             }
-
+            x = 0;
             visited[i] = true;
-        }
-    }
-
-    public void addTiles()
-    {
-        foreach (Room r in bestGraph.rooms)
-        {
-            r.setTiles();
-            foreach (Quad q in r.quads)
-                ts.setTile(q.pivot, q.tileType);
         }
     }
 
@@ -347,10 +269,10 @@ public class Generator : MonoBehaviour
 
         //Gizmos.color = Color.white;
 
-        //for (int i = 0; i < rooms.Length; i++)
-        //    for (int j = 0; j < rooms.Length; j++)
-        //        if (matrix[i][j])
-        //            Gizmos.DrawLine(rooms[i].pivot, rooms[j].pivot);
+        for (int i = 0; i < rooms.Length; i++)
+            for (int j = 0; j < rooms.Length; j++)
+                if (matrix[i][j])
+                    Gizmos.DrawLine(rooms[i].quads[0].pivot, rooms[j].quads[0].pivot);
 
     }
 }

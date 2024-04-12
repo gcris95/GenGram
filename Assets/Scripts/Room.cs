@@ -861,11 +861,6 @@ public class Room
         calcArea();
     }
 
-    public void simplify()
-    {
-
-    }
-
     //public void calcPivot()
     //{
     //    float sumX = 0, sumY = 0;

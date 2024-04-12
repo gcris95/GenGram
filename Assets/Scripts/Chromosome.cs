@@ -6,9 +6,12 @@ using UnityEngine;
 public class Chromosome
 {
     public int[] genes;
-    public float fitness;
     public float mutationRate;
-    public int mutations = 0;   
+    public int mutations = 0;
+
+    public float fitness;
+    public float paretoFitness;
+    public float hwFitness, roomsFitness, sizeFitness, distanceFitness, connectionFitness;
 
     public Chromosome(int length, float mutationRate, bool initialize = true)
     {
@@ -154,7 +157,7 @@ public class Chromosome
 
         malus = Mathf.Max(Mathf.Abs(dist - mean) - diff, 0);
 
-        float distanceFitness = 1 / (malus + 1);
+        distanceFitness = 1 / (malus + 1);
 
         fitData.FirstLastDistancePoints = malus;
         mapData.firstLastDistance = dist;
@@ -187,12 +190,12 @@ public class Chromosome
         {
             x = Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
             //if (i != lastRoom)
-            malus += rooms[i].quads.Count < 5 ? x : Mathf.Pow(x / 32, 2);
+            malus += rooms[i].quads.Count < 5 ? x : x / 32;
         }
 
         malus /= rooms.Length;
 
-        float sizeFitness = 1 / (malus + 1);
+        sizeFitness = 1 / (malus + 1);
 
         fitData.roomSizePoints = malus;
 
@@ -207,7 +210,7 @@ public class Chromosome
 
         malus = Mathf.Max(Mathf.Abs(rooms.Length - mean) - diff, 0);
 
-        float roomsFitness = 1 / (malus + 1);
+        roomsFitness = 1 / (malus + 1);
 
         fitData.roomNumberPoints = malus;
         mapData.roomsNumber = rooms.Length;
@@ -247,7 +250,7 @@ public class Chromosome
 
         //malus = Mathf.Abs((malus / rooms.Length) - settings.connections);
 
-        float connectionFitness = 1 / (malus + 1);
+        connectionFitness = 1 / (malus + 1);
 
         fitData.ConnectionPerRoomPoints = connectionFitness;
 
@@ -261,7 +264,7 @@ public class Chromosome
 
         malus /= rooms.Length;
 
-        float hwFitness = 1 / (malus + 1);
+        hwFitness = 1 / (malus + 1);
 
         fitData.HeightWidthPoints = malus;
 
@@ -278,9 +281,7 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-
-
-        fitness = (roomsFitness + sizeFitness + distanceFitness) / 3 /*+ connectionFitness*/;
+        fitness = (roomsFitness + sizeFitness + distanceFitness + connectionFitness) / 4;
 
         #region Shape Variance TODO
 
