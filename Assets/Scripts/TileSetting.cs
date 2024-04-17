@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public enum TileType : int
 {
@@ -129,6 +130,7 @@ public enum TileType : int
 public class TileSetting : MonoBehaviour
 {
     public Tilemap tilemap;
+    public Tilemap doorTilemap;
     public Tilemap collTilemap;
 
     public TileBase sxSide;
@@ -140,6 +142,7 @@ public class TileSetting : MonoBehaviour
     public TileBase botDXAngle;
 
     public TileBase door;
+    public TileBase verticalDoor;
     public TileBase floor;
     public TileBase exBotSXAngle;
     public TileBase exBotDXAngle;
@@ -339,7 +342,7 @@ public class TileSetting : MonoBehaviour
         indecesMatrix[46] = uBotTiles;
     }
 
-    public void setTile(Vector2 quadPosition, TileType type)
+    public void setTiles(Vector2 quadPosition, TileType type)
     {
         indeces = indecesMatrix[(int)type];
 
@@ -364,4 +367,70 @@ public class TileSetting : MonoBehaviour
             y--;
         }
     }
+
+    public void setDoorTile(Vector2 position, bool vertical)
+    {
+        Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y));
+        tilemap.SetTile(cellPosition, floor);
+
+        if (vertical)
+            doorTilemap.SetTile(cellPosition, verticalDoor);
+        else
+            doorTilemap.SetTile(cellPosition, door);
+
+    }
+
+    public void createCorridor(Vector2 position, bool vertical)
+    {
+        if (vertical)
+        {
+            Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(position.x - 1, position.y));
+            tilemap.SetTile(cellPosition, sxSide);
+            cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y));
+            tilemap.SetTile(cellPosition, floor);
+            cellPosition = tilemap.WorldToCell(new Vector3(position.x + 1, position.y));
+            tilemap.SetTile(cellPosition, dxSide);
+        }
+        else
+        {
+            Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y + 1));
+            tilemap.SetTile(cellPosition, topSide);
+            cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y));
+            tilemap.SetTile(cellPosition, floor);
+            cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y - 1));
+            tilemap.SetTile(cellPosition, botSide);
+        }
+    }
+
+    public void changeDoorWalls(Vector2 doorPosition, int type)
+    {
+        Vector3Int cellPosition;
+        if (type == 1)
+        {
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x - 1, doorPosition.y));
+            collTilemap.SetTile(cellPosition, exBotSXAngle);
+
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x + 1, doorPosition.y));
+            collTilemap.SetTile(cellPosition, exBotDXAngle);
+        }
+        else if (type == 2)
+        {
+
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y + 1));            
+            collTilemap.SetTile(cellPosition, topSide);                              
+            
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y - 1));
+            collTilemap.SetTile(cellPosition, exBotDXAngle);
+        }
+        else
+        {
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y+1));
+            collTilemap.SetTile(cellPosition, topSide);
+
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y-1));
+            collTilemap.SetTile(cellPosition, exBotSXAngle);
+        }
+    }
+
+
 }

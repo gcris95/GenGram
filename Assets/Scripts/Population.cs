@@ -32,6 +32,20 @@ public class Population
         generations++;
     }
 
+    public void reinitialize()
+    {
+        for (int i = 0; i < population.Length; i++)        
+            population[i] = new Chromosome(population[i].genes.Length, population[i].mutationRate);        
+    }
+
+    public void partialReinitialize()
+    {
+        orderPopulation();
+
+        for (int i = population.Length / 2; i < population.Length; i++)       
+            population[i] = new Chromosome(population[i].genes.Length, population[i].mutationRate);        
+    }
+
     private void selection()
     {
         List<Chromosome> populationCopy = new List<Chromosome>(population);

@@ -18,7 +18,7 @@ MonoBehaviour:
   tournamentSize: 10
   mutationRate: 1
   elitism: 0
-  maxGenerations: 1000
+  maxGenerations: 500
   quadSize: 4
   sizeWeight: 0
   finalSizeWeight: 0

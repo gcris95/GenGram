@@ -53,11 +53,10 @@ public class ShapeGrammar
             shiftamount = Mathf.Max(shiftamount, r.width, r.height);
         }
 
-        foreach (Room r in list)
-            r.shiftRoom(shiftamount + 1);
+        //foreach (Room r in list)
+        //    r.shiftRoom((int)shiftamount);
 
-
-        Graph g = new Graph(list.ToArray(), c, shiftamount * 1.5f + 1, minX, maxX, minY, maxY);
+        Graph g = new Graph(list.ToArray(), c, shiftamount + 1, minX, maxX, minY, maxY);
 
         id = 1;
         list.Clear();

@@ -362,6 +362,8 @@ public class Room
 
     public void calcSize()
     {
+        calcArea();
+
         if (quads.Count == 1)
         {
             float quadSize = quads[0].size;
@@ -377,8 +379,8 @@ public class Room
 
             for (int i = 0; i < quads.Count; i++)
             {
-                minY = Mathf.Min(minX, quads[i].y);
-                maxY = Mathf.Max(maxX, quads[i].y);
+                minY = Mathf.Min(minY, quads[i].y);
+                maxY = Mathf.Max(maxY, quads[i].y);
                 minX = Mathf.Min(minX, quads[i].x);
                 maxX = Mathf.Max(maxX, quads[i].x);
             }
@@ -514,6 +516,9 @@ public class Room
                     case TileType.botBorderRightAngleTile:
                         current.tileType = TileType.botSxangleAndAngleTile;
                         break;
+                    case TileType.topBorderRightAngleTile:
+                        current.tileType = TileType.topSxangleAndAngleTile;
+                        break;
                     case TileType.dxBorderTile:
                         current.tileType = TileType.leftrightborder;
                         break;
@@ -617,6 +622,9 @@ public class Room
                         break;
                     case TileType.leftBorderBotAngleTile:
                         current.tileType = TileType.topSxangleAndAngleTile;
+                        break;
+                    case TileType.rightBorderBotAngleTile:
+                        current.tileType = TileType.topDxangleAndAngleTile;
                         break;
                     case TileType.botBorderTile:
                         current.tileType = TileType.topbotborder;
@@ -858,7 +866,6 @@ public class Room
             vertices[i] = new Vector2(vertices[i].x + (x * shiftAmount), vertices[i].y + (y * shiftAmount));
 
         //calcPivot();
-        calcArea();
     }
 
     //public void calcPivot()
@@ -1014,7 +1021,7 @@ public class Room
         foreach (Quad q in quads)
         {
             q.shiftAgain(shift);
-            ts.setTile(q.pivot, q.tileType);
+            ts.setTiles(q.pivot, q.tileType);
             q.show(room);
         }
     }
@@ -1047,11 +1054,5 @@ public class Room
                     rightQuad = quads[i];
             }
         }
-
-        Debug.Log("ID: " + id);
-        Debug.Log("LEFT: " + leftQuad.x + " " + leftQuad.y);
-        Debug.Log("RIGHT: " + rightQuad.x + " " + rightQuad.y);
-        Debug.Log("UP: " + upperQuad.x + " " + upperQuad.y);
-        Debug.Log("DOWN: " + bottomQuad.x + " " + bottomQuad.y);
     }
 }

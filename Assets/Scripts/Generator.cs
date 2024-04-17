@@ -24,7 +24,7 @@ public class Generator : MonoBehaviour
     private IEnumerator generation()
     {
         float time = Time.time;
-
+        int cont = 0;
         int chromosomeLength = 4 + settings.rulesNumber * 6;
         maps = new Population(settings, chromosomeLength);
 
@@ -33,6 +33,8 @@ public class Generator : MonoBehaviour
 
         do
         {
+            cont++;
+
             bestGraph = null;
 
             for (int i = 0; i < maps.population.Length; i++)
@@ -50,8 +52,14 @@ public class Generator : MonoBehaviour
             if (testing || bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
                 break;
 
-            maps.newGeneration();
-
+            if (bestGraph.chromosome.fitness < 0.7 && cont > 20)
+            {
+                maps.reinitialize();
+                cont = 0;
+            }
+            //else            
+                maps.newGeneration();
+            
 
             yield return null;
         }
@@ -71,7 +79,7 @@ public class Generator : MonoBehaviour
 
         foreach (Room r in bestGraph.rooms)
             r.show(bestGraph.shiftAmount, bestGraph, ts);
-        createCorridors();
+        StartCoroutine(createCorridors());
 
         Debug.Log("GENERAZIONI: " + maps.generations);
         Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
@@ -93,7 +101,7 @@ public class Generator : MonoBehaviour
         DataLogger.log(settings, bestGraph, time, maps.generations);
     }
 
-    public void createCorridors()
+    public IEnumerator createCorridors()
     {
         Room[] rooms = bestGraph.rooms;
         bool[][] matrix = bestGraph.matrix;
@@ -111,129 +119,113 @@ public class Generator : MonoBehaviour
 
         for (int i = 0; i < rooms.Length; i++)
         {
-            Debug.Log(rooms[i].id + " Pivot: " + rooms[i].quads[0].pivot);
             y++;
             if (rooms[i].up != null && !visited[rooms[i].up.id] && matrix[i][rooms[i].up.id])
             {
+                ts.setDoorTile(rooms[i].upperQuad.pivot + Vector2.up * 1.5f, false);
+                ts.setDoorTile(rooms[rooms[i].up.id].bottomQuad.pivot - Vector2.up * 1.5f, false);
+                ts.changeDoorWalls(rooms[rooms[i].up.id].bottomQuad.pivot - Vector2.up * 1.5f, 1);
+
                 pivot1 = rooms[i].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
                 pivot2 = rooms[rooms[i].up.id].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
 
-                while (pivot1 != pivot2)
+                while (pivot1 != pivot2 && pivot1.y < pivot2.y)
                 {
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot1;
-                    go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
 
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot2;
-                    go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
+                    ts.createCorridor(pivot1, true);
+                    ts.createCorridor(pivot2, true);
 
                     pivot1 += Vector2.up;
                     pivot2 += Vector2.down;
                     x++;
+                    yield return null;
+
                 }
-                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                go.name = "" + y;
-                go.transform.position = pivot1;
-                go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
-                go.transform.parent = corridors.transform;
+
+                ts.createCorridor(pivot1, true);
 
             }
             if (rooms[i].right != null && !visited[rooms[i].right.id] && matrix[i][rooms[i].right.id])
             {
+                ts.setDoorTile(rooms[i].rightQuad.pivot + Vector2.right * 1.5f, true);
+                ts.setDoorTile(rooms[rooms[i].right.id].leftQuad.pivot - Vector2.right * 1.5f, true);
+
+                ts.changeDoorWalls(rooms[i].rightQuad.pivot + Vector2.right * 1.5f, 2);
+                ts.changeDoorWalls(rooms[rooms[i].right.id].leftQuad.pivot - Vector2.right * 1.5f, 3);
+
                 pivot1 = rooms[i].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
                 pivot2 = rooms[rooms[i].right.id].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
 
-                while (pivot1 != pivot2)
+                while (pivot1 != pivot2 && pivot1.x < pivot2.x)
                 {
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot1;
-                    go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
 
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot2;
-                    go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
+                    ts.createCorridor(pivot1, false);
+                    ts.createCorridor(pivot2, false);
+
 
                     pivot1 = pivot1 + Vector2.right;
                     pivot2 = pivot2 + Vector2.left;
                     x++;
+                    yield return null;
+
                 }
-                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                go.name = "" + y;
-                go.transform.position = pivot1;
-                go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
-                go.transform.parent = corridors.transform;
+
+                ts.createCorridor(pivot1, false);
+
             }
             if (rooms[i].down != null && !visited[rooms[i].down.id] && matrix[i][rooms[i].down.id])
             {
+                ts.setDoorTile(rooms[i].bottomQuad.pivot - Vector2.up * 1.5f, false);
+                ts.setDoorTile(rooms[rooms[i].down.id].upperQuad.pivot + Vector2.up * 1.5f, false);
+                ts.changeDoorWalls(rooms[i].bottomQuad.pivot - Vector2.up * 1.5f, 1);
+
+
                 pivot1 = rooms[i].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
                 pivot2 = rooms[rooms[i].down.id].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
 
-                while (pivot1 != pivot2)
+                while (pivot1 != pivot2 && pivot1.y > pivot2.y)
                 {
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot1;
-                    go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
 
-
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot2;
-                    go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
+                    ts.createCorridor(pivot1, true);
+                    ts.createCorridor(pivot2, true);
 
                     pivot1 = pivot1 + Vector2.down;
                     pivot2 = pivot2 + Vector2.up;
                     x++;
+                    yield return null;
+
                 }
-                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                go.name = "" + y;
-                go.transform.position = pivot1;
-                go.transform.localScale = Vector2.right * 3 + Vector2.up; //Vector2.one
-                go.transform.parent = corridors.transform;
+                ts.createCorridor(pivot1, true);
             }
             if (rooms[i].left != null && !visited[rooms[i].left.id] && matrix[i][rooms[i].left.id])
             {
+                ts.setDoorTile(rooms[i].leftQuad.pivot - Vector2.right * 1.5f, true);
+                ts.setDoorTile(rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 1.5f, true);
+
+                ts.changeDoorWalls(rooms[i].leftQuad.pivot - Vector2.right * 1.5f, 3);
+                ts.changeDoorWalls(rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 1.5f, 2);
+
                 pivot1 = rooms[i].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
                 pivot2 = rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
 
-                while (pivot1 != pivot2)
+                while (pivot1 != pivot2 && pivot1.x > pivot2.x)
                 {
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot1;
-                    go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
 
-                    go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    go.transform.position = pivot2;
-                    go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
-                    go.transform.parent = corridors.transform;
-                    go.name = "" + y;
+                    ts.createCorridor(pivot1, false);
+                    ts.createCorridor(pivot2, false);
 
                     pivot1 = pivot1 + Vector2.left;
                     pivot2 = pivot2 + Vector2.right;
                     x++;
+                    yield return null;
+
                 }
-                go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                go.name = "" + y;
-                go.transform.position = pivot1;
-                go.transform.localScale = Vector2.up * 3 + Vector2.right; //Vector2.one
-                go.transform.parent = corridors.transform;
+                ts.createCorridor(pivot1, false);
             }
             x = 0;
             visited[i] = true;
         }
+
     }
 
     public void OnDrawGizmos()
@@ -256,7 +248,7 @@ public class Generator : MonoBehaviour
             else if (j == bestGraph.lastRoomId)
                 Gizmos.color = Color.red;
             else
-                Gizmos.color = Color.green;
+                Gizmos.color = Color.clear;
 
             Gizmos.DrawCube(rooms[j].quads[0].pivot, Vector3.one * 3f);
 
@@ -269,10 +261,10 @@ public class Generator : MonoBehaviour
 
         //Gizmos.color = Color.white;
 
-        for (int i = 0; i < rooms.Length; i++)
-            for (int j = 0; j < rooms.Length; j++)
-                if (matrix[i][j])
-                    Gizmos.DrawLine(rooms[i].quads[0].pivot, rooms[j].quads[0].pivot);
+        //for (int i = 0; i < rooms.Length; i++)
+        //    for (int j = 0; j < rooms.Length; j++)
+        //        if (matrix[i][j])
+        //            Gizmos.DrawLine(rooms[i].quads[0].pivot, rooms[j].quads[0].pivot);
 
     }
 }
