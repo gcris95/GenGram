@@ -399,6 +399,8 @@ public class Room
             return;
         }
 
+        List<Quad> visited = new List<Quad>();
+
         Quad current = quads[0];
         while (current.up != null)
             current = current.up;
@@ -406,18 +408,13 @@ public class Room
         Quad first = current;
 
         int direction = 1;
-        bool passedFirst = false;
         bool exit = false;
-        bool passedSecond = false;
 
         //Debug.Log("Room: " + id);
         //Debug.Log("First: " + first.x + " " + first.y);
 
         while (!exit)
-        {
-            if (current == first && passedFirst)
-                passedSecond = true;
-
+        {            
             if (direction == 0)
             {
                 if (current.left != null)
@@ -480,6 +477,9 @@ public class Room
                             break;
                     }
 
+                    if (!visited.Contains(current))
+                        visited.Add(current);
+
                     current = current.left;
                     continue;
                 }
@@ -529,9 +529,13 @@ public class Room
                     direction = 1;
                     continue;
                 }
-                if (passedSecond)
+
+                if (current == first && visited.Contains(current.up))
                     exit = true;
-                passedFirst = true;
+
+                if (!visited.Contains(current))
+                    visited.Add(current);
+
                 current = current.up;
             }
             else if (direction == 1)
@@ -596,6 +600,8 @@ public class Room
                             break;
                     }
 
+                    if (!visited.Contains(current))
+                        visited.Add(current);
                     current = current.up;
                     continue;
                 }
@@ -615,7 +621,7 @@ public class Room
                         current.tileType = TileType.rightBorderTopAngleTile;
                         break;
                     case TileType.exBotSxangleTile:
-                        current.tileType = TileType.rightBorderBotAngleTile;
+                        current.tileType = TileType.topBorderLeftAngleTile;
                         break;
                     case TileType.exDoubleLeftAngleTile:
                         current.tileType = TileType.rightBorderLeftAnglesTile;
@@ -636,9 +642,12 @@ public class Room
                     direction = 2;
                     continue;
                 }
-                if (passedSecond)
+
+                if (current == first && visited.Contains(current.right))
                     exit = true;
-                passedFirst = true;
+
+                if (!visited.Contains(current))
+                    visited.Add(current);
                 current = current.right;
 
             }
@@ -704,6 +713,8 @@ public class Room
                             break;
                     }
 
+                    if (!visited.Contains(current))
+                        visited.Add(current);
                     current = current.right;
                     continue;
                 }
@@ -741,9 +752,12 @@ public class Room
                     direction = 3;
                     continue;
                 }
-                if (passedSecond)
+
+                if (current == first && visited.Contains(current.down))
                     exit = true;
-                passedFirst = true;
+
+                if (!visited.Contains(current))
+                    visited.Add(current);
                 current = current.down;
             }
             else
@@ -808,6 +822,8 @@ public class Room
                             break;
                     }
 
+                    if (!visited.Contains(current))
+                        visited.Add(current);
                     current = current.down;
                     continue;
                 }
@@ -845,9 +861,12 @@ public class Room
                     direction = 0;
                     continue;
                 }
-                if (passedSecond)
+
+                if (current == first && visited.Contains(current.left))
                     exit = true;
-                passedFirst = true;
+
+                if (!visited.Contains(current))
+                    visited.Add(current);
                 current = current.left;
             }
         }
