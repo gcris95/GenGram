@@ -31,6 +31,13 @@ public class Room
     public Quad rightQuad = null;
     public Quad bottomQuad = null;
 
+    public Vector2 position = Vector2.zero;
+
+    public int minX = 0;
+    public int maxX = 0;
+    public int minY = 0;
+    public int maxY = 0;
+
     public Room(int id, int x, int y, int quadSize, bool[] neighbours)
     {
         this.id = id;
@@ -372,11 +379,6 @@ public class Room
         }
         else
         {
-            int minX = 0;
-            int maxX = 0;
-            int minY = 0;
-            int maxY = 0;
-
             for (int i = 0; i < quads.Count; i++)
             {
                 minY = Mathf.Min(minY, quads[i].y);
@@ -1020,7 +1022,17 @@ public class Room
         quads.Insert(quadIndex, newQ);
     }
 
-    public void show(float shiftAmount, Graph g, TileSetting ts)
+    public void shift(Vector2 shiftAmount)
+    {
+        //foreach (Quad q in quads)
+        //{
+        //    q.shift(shiftAmount);
+        //}
+
+        position += shiftAmount;
+    }
+
+    public void show(Graph g, TileSetting ts)
     {
         GameObject room = new GameObject("Room " + id);
         RoomInfoDisplay r = room.AddComponent<RoomInfoDisplay>();
@@ -1036,10 +1048,9 @@ public class Room
 
         setTiles();
 
-        Vector2 shift = new Vector2((x * shiftAmount), (y * shiftAmount));
         foreach (Quad q in quads)
         {
-            q.shiftAgain(shift);
+            q.shift(position);
             ts.setTiles(q.pivot, q.tileType);
             q.show(room);
         }

@@ -58,8 +58,8 @@ public class Generator : MonoBehaviour
                 cont = 0;
             }
             //else            
-                maps.newGeneration();
-            
+            maps.newGeneration();
+
 
             yield return null;
         }
@@ -77,8 +77,7 @@ public class Generator : MonoBehaviour
         time = Time.time - time;
 
 
-        foreach (Room r in bestGraph.rooms)
-            r.show(bestGraph.shiftAmount, bestGraph, ts);
+        createRooms();
         StartCoroutine(createCorridors());
 
         Debug.Log("GENERAZIONI: " + maps.generations);
@@ -227,6 +226,103 @@ public class Generator : MonoBehaviour
         }
 
     }
+
+    public void createRooms()
+    {
+        Room[] rooms = bestGraph.rooms;
+
+        int currentRow = bestGraph.minY;
+        int currentCol = bestGraph.minX;
+
+        int endRow = bestGraph.maxY;
+        int endCol = bestGraph.maxX;
+
+        List<Room> currentLine = new List<Room>();
+
+        float shiftValue;
+        float totalShift = 0;
+        int min = 0;
+
+        while (currentRow < endRow)
+        {
+            shiftValue = 0;
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].y == currentRow)
+                {
+                    if (rooms[i].maxY > shiftValue)
+                        shiftValue = rooms[i].maxY;
+                }
+            }
+
+            currentRow++;
+
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].minY < min)
+                {
+                    min = rooms[i].minY;
+                }
+            }
+            totalShift += (shiftValue - min + 1) * rooms[0].quads[0].size + 1;
+            Debug.Log("-----------------------");
+            Debug.Log("current X " + currentRow);
+            Debug.Log("SHIFTVALUE " + shiftValue);
+            Debug.Log("TOTALSHIFT " + totalShift);
+            min = 0;
+
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].y == currentRow)
+                {
+                    rooms[i].shift(Vector2.up * totalShift);
+                }
+            }
+        }
+
+        totalShift = 0;
+        while (currentCol < endCol)
+        {
+            shiftValue = 0;
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].x == currentCol)
+                {
+                    if (rooms[i].maxX > shiftValue)
+                        shiftValue = rooms[i].maxX;
+                }
+            }
+
+            currentCol++;
+
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].minX < min)
+                {
+                    min = rooms[i].minX;
+                }
+            }
+
+            totalShift += (shiftValue - min + 1) * rooms[0].quads[0].size + 1;
+            Debug.Log("-----------------------");
+            Debug.Log("current Y " + currentCol);
+            Debug.Log("SHIFTVALUE " + shiftValue);
+            Debug.Log("TOTALSHIFT " + totalShift);
+            min = 0;
+
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].x == currentCol)
+                {
+                    rooms[i].shift(Vector2.right * totalShift);
+                }
+            }
+        }
+
+        foreach (Room room in rooms)
+            room.show(bestGraph, ts);
+    }
+
 
     public void OnDrawGizmos()
     {

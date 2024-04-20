@@ -39,15 +39,9 @@ public class Quad
             downLeft = new Vector2(pivot.x - halfSize, pivot.y - halfSize);
     }
 
-    public void shiftQuad()
+    public void shift(Vector2 shiftAmount)
     {
-        pivot = new Vector2(x * size, y * size);
-    }
-
-    public void shiftAgain(Vector2 shiftAmount)
-    {
-        shiftQuad();
-        pivot += shiftAmount;
+        pivot += new Vector2(x * size, y * size) + shiftAmount;
     }
 
     public void show(GameObject room)
