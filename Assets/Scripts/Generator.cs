@@ -17,6 +17,7 @@ public class Generator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        checkSettings();
         ts = GetComponent<TileSetting>();
         StartCoroutine(generation());
     }
@@ -321,6 +322,11 @@ public class Generator : MonoBehaviour
 
         foreach (Room room in rooms)
             room.show(bestGraph, ts);
+    }
+
+    public void checkSettings()
+    {
+
     }
 
 

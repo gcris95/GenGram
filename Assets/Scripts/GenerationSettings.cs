@@ -1,3 +1,4 @@
+using GD.MinMaxSlider;
 using System;
 using UnityEngine;
 
@@ -16,41 +17,35 @@ public class GenerationSettings : ScriptableObject
     [Range(1, 4)]
     public int quadSize;
 
-    [Space(20)]
+    //[Space(20)]
 
-    [Header("Weights")]
-    public float sizeWeight;
-    public float finalSizeWeight; //TODO
-    public float roomNumberWeight;
-    public float hwRatioWeight;
-    public float connectionWeight;
-    public float extraRoomWeight;
-    public float distanceWeight;
-    public float varianceWeight; // TODO
+    //[Header("Weights")]
+    //public float sizeWeight;
+    //public float finalSizeWeight; //TODO
+    //public float roomNumberWeight;
+    //public float hwRatioWeight;
+    //public float connectionWeight;
+    //public float distanceWeight;
+    //public float varianceWeight; // TODO
 
     [Space(20)]
 
     [Header("Map Settings")]
     [Header("Rooms Number")]
-    public int minRooms;
-    public int maxRooms;
+    [MinMaxSlider(1, 100)]
+    public Vector2Int roomsNumber;
     [Header("Rooms size")]
-    public int minSize;
-    public int maxSize;
-    public int finalRoomSize;
+    [MinMaxSlider(16, 640)]
+    public Vector2Int roomsSize;
+    [Header("First Room-Last Room distance")]
+    [MinMaxSlider(1,100)]
+    public Vector2Int firstLastDistance;
+    [Header("Rooms distribution")]
+    [Tooltip("Toggle this if the cover percentage of the grid must be considered as a minimum, as a maximum otherwise")]
+    public bool minMaxCover = true;
+    [Range(25f, 100f)]
+    public float coverPercentage = 50;
     [Header("Height-Width room ratio")]
     [Range(0.25f, 4)]
     public float hwRatio = 1;
-    [Header("Extra Rooms")]
-    public int minExtraRooms;
-    public int maxExtraRooms;
-    [Header("First-Last Room distance")]
-    public int minDistance;
-    public int maxDistance;
-    [Header("Connection per room")]
-    [Range(2, 4)]
-    public float connections = 3;
-
-
-
 }

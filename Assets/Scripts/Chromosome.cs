@@ -149,11 +149,11 @@ public class Chromosome
 
         #region First-Last distance
 
-        mean = (settings.maxDistance + settings.minDistance) / 2;
-        diff = (settings.maxDistance - mean);
+        mean = (settings.firstLastDistance.y + settings.firstLastDistance.x) / 2;
+        diff = (settings.firstLastDistance.y - mean);
 
         int lastRoom = g.findLast(mean);
-        int dist = lastRoom == 0 ? settings.maxDistance * 10 : g.distances[lastRoom];
+        int dist = lastRoom == 0 ? settings.firstLastDistance.y * 10 : g.distances[lastRoom];
 
         malus = Mathf.Max(Mathf.Abs(dist - mean) - diff, 0);
 
@@ -166,8 +166,8 @@ public class Chromosome
 
         #region Rooms size
 
-        mean = (settings.maxSize + settings.minSize) / 2;
-        diff = (settings.maxSize - mean);
+        mean = (settings.roomsSize.y + settings.roomsSize.x) / 2;
+        diff = (settings.roomsSize.y - mean);
 
         #region mean method
         //float[] areas = new float[rooms.Length - 1];
@@ -205,8 +205,8 @@ public class Chromosome
 
         #region Rooms number
 
-        mean = (settings.maxRooms + settings.minRooms) / 2;
-        diff = (settings.maxRooms - mean);
+        mean = (settings.roomsNumber.y + settings.roomsNumber.x) / 2;
+        diff = (settings.roomsNumber.y - mean);
 
         malus = Mathf.Max(Mathf.Abs(rooms.Length - mean) - diff, 0);
 
