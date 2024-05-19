@@ -32,14 +32,14 @@ public class GenerationSettings : ScriptableObject
 
     [Header("Map Settings")]
     [Header("Rooms Number")]
-    [MinMaxSlider(1, 100)]
-    public Vector2Int roomsNumber;
+    [MinMaxSlider(2, 100)]
+    public Vector2Int roomsNumber = new Vector2Int(7, 15);
     [Header("Rooms size")]
     [MinMaxSlider(16, 640)]
-    public Vector2Int roomsSize;
+    public Vector2Int roomsSize = new Vector2Int(64, 160);
     [Header("First Room-Last Room distance")]
     [MinMaxSlider(1,100)]
-    public Vector2Int firstLastDistance;
+    public Vector2Int firstLastDistance = new Vector2Int(1, 10);
     [Header("Rooms distribution")]
     [Tooltip("Toggle this if the cover percentage of the grid must be considered as a minimum, as a maximum otherwise")]
     public bool minMaxCover = true;

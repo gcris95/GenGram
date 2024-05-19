@@ -232,14 +232,17 @@ public class Chromosome
 
         float ratio = rows > cols ? rows / cols : cols / rows;
 
-        // Considero il grado di pienezza delle righe, ovvero COLS, che è il numero massimo di stanze presenti per ogni riga, meno LA MEDIA DI STANZE PER RIGA
+        // Considero il grado di pienezza delle righe, ovvero COLS, che ï¿½ il numero massimo di stanze presenti per ogni riga, meno LA MEDIA DI STANZE PER RIGA
         // Sommo 1 in modo che il risultato non possa essere 0 e peso per la grandezza del grafo, in modo che un grafo 2x10 pieno sia svantaggiato rispetto a un grafo 4x5 (prendo il rateo maggiore, quindi ad esempio 10/2 e non 2/10)
         // Stessa cosa per la pienezza delle colonne
-        // Poichè il denominatore non può essere <1, non c'è bisogno di sommare 1 al denominatore nel calcolo della fitness, e il risultato ottimale per il malus sarà 1
+        // Poichï¿½ il denominatore non puï¿½ essere <1, non c'ï¿½ bisogno di sommare 1 al denominatore nel calcolo della fitness, e il risultato ottimale per il malus sarï¿½ 1
         //malus = (ratio * (cols - roomPerRow + 1)) + (ratio * (rows - roomPerCol + 1)) / 2;
 
+        if (settings.minMaxCover)
+            malus = (Mathf.Max((cols * settings.coverPercentage / 100) - roomPerRow, 0) + Mathf.Max(((rows * settings.coverPercentage / 100) - roomPerCol), 0)) / 2;
+        else
+            malus = (Mathf.Max(roomPerRow - (cols * settings.coverPercentage / 100), 0) + Mathf.Max((roomPerCol - (rows * settings.coverPercentage / 100)), 0)) / 2;
 
-        malus = (Mathf.Max((cols * 3 / 5) - roomPerRow, 0) + Mathf.Max(((rows * 3 / 5) - roomPerCol), 0)) / 2;
         malus = malus == 0 ? ratio : malus * ratio;
 
 
@@ -292,7 +295,7 @@ public class Chromosome
         mapData.shapeVariance = 0; // TODO
         #endregion
 
-
+        #region RoomData
         RoomData roomData;
 
         foreach (Room r in rooms)
@@ -312,6 +315,7 @@ public class Chromosome
         fitData.fitness = fitness;
         g.fitnessData = fitData;
         g.mapData = mapData;
+        #endregion
     }
 
     private float calculateMean(float[] values)

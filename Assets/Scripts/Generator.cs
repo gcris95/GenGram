@@ -108,7 +108,6 @@ public class Generator : MonoBehaviour
         Vector2 pivot1;
         Vector2 pivot2;
         GameObject corridors = new GameObject("Corridors");
-        GameObject go;
 
         int x = 0;
         int y = 0;
