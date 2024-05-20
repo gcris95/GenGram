@@ -37,6 +37,8 @@ public class GenerationSettings : ScriptableObject
     [Header("Rooms size")]
     [MinMaxSlider(16, 640)]
     public Vector2Int roomsSize = new Vector2Int(64, 160);
+    [MinMaxSlider(1, 100)]
+    public Vector2Int quadPerRoom = new Vector2Int(2, 6);
     [Header("First Room-Last Room distance")]
     [MinMaxSlider(1,100)]
     public Vector2Int firstLastDistance = new Vector2Int(1, 10);

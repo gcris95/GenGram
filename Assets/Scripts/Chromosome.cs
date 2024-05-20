@@ -166,8 +166,11 @@ public class Chromosome
 
         #region Rooms size
 
-        mean = (settings.roomsSize.y + settings.roomsSize.x) / 2;
-        diff = (settings.roomsSize.y - mean);
+        //mean = (settings.roomsSize.y + settings.roomsSize.x) / 2;
+        //diff = (settings.roomsSize.y - mean);
+
+        mean = (settings.quadPerRoom.y + settings.quadPerRoom.x) / 2;
+        diff = (settings.quadPerRoom.y - mean);
 
         #region mean method
         //float[] areas = new float[rooms.Length - 1];
@@ -188,9 +191,9 @@ public class Chromosome
         float x;
         for (int i = 0; i < rooms.Length; i++)
         {
-            x = Mathf.Max(Mathf.Abs(rooms[i].area - mean) - diff, 0);
+            x = Mathf.Max(Mathf.Abs(rooms[i].quads.Count - mean) - diff, 0);
             //if (i != lastRoom)
-            malus += rooms[i].quads.Count < 5 ? x : x / 32;
+            malus += x;
         }
 
         malus /= rooms.Length;
