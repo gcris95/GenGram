@@ -265,10 +265,10 @@ public class Generator : MonoBehaviour
                 }
             }
             totalShift += (shiftValue - min + 1) * rooms[0].quads[0].size + 1;
-            Debug.Log("-----------------------");
-            Debug.Log("current X " + currentRow);
-            Debug.Log("SHIFTVALUE " + shiftValue);
-            Debug.Log("TOTALSHIFT " + totalShift);
+            //Debug.Log("-----------------------");
+            //Debug.Log("current X " + currentRow);
+            //Debug.Log("SHIFTVALUE " + shiftValue);
+            //Debug.Log("TOTALSHIFT " + totalShift);
             min = 0;
 
             for (int i = 0; i < rooms.Length; i++)
@@ -304,18 +304,16 @@ public class Generator : MonoBehaviour
             }
 
             totalShift += (shiftValue - min + 1) * rooms[0].quads[0].size + 1;
-            Debug.Log("-----------------------");
-            Debug.Log("current Y " + currentCol);
-            Debug.Log("SHIFTVALUE " + shiftValue);
-            Debug.Log("TOTALSHIFT " + totalShift);
+            //Debug.Log("-----------------------");
+            //Debug.Log("current Y " + currentCol);
+            //Debug.Log("SHIFTVALUE " + shiftValue);
+            //Debug.Log("TOTALSHIFT " + totalShift);
             min = 0;
 
             for (int i = 0; i < rooms.Length; i++)
             {
-                if (rooms[i].x == currentCol)
-                {
-                    rooms[i].shift(Vector2.right * totalShift);
-                }
+                if (rooms[i].x == currentCol)                
+                    rooms[i].shift(Vector2.right * totalShift);                
             }
         }
 
@@ -325,7 +323,10 @@ public class Generator : MonoBehaviour
 
     public void checkSettings()
     {
+        float roomMean = (settings.roomsNumber.y + settings.roomsNumber.x) / 2;
+        float sizeMean = (settings.quadPerRoom.y + settings.quadPerRoom.x) / 2;
 
+        settings.rulesNumber = (int)(roomMean * sizeMean);
     }
 
 
