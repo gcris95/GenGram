@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,15 +22,9 @@ public class Room
     // Position of the room in the world;
     public int x, y;
 
-    public Vector2 pivot;
     public float area;
     public float height, width;
     public List<Vector2> vertices = new List<Vector2>(4);
-
-    public Quad upperQuad = null;
-    public Quad leftQuad = null;
-    public Quad rightQuad = null;
-    public Quad bottomQuad = null;
 
     public Vector2 position = Vector2.zero;
 
@@ -416,7 +411,7 @@ public class Room
         //Debug.Log("First: " + first.x + " " + first.y);
 
         while (!exit)
-        {            
+        {
             if (direction == 0)
             {
                 if (current.left != null)
@@ -1046,6 +1041,9 @@ public class Room
         r.area = area;
         r.x = x; r.y = y;
 
+        r.minX = minX; r.maxX = maxX;
+        r.minY = minY; r.maxY = maxY;
+
         setTiles();
 
         foreach (Quad q in quads)
@@ -1056,33 +1054,47 @@ public class Room
         }
     }
 
-    public void calcBorderQuads()
+    public Quad calcVerticalBorder(int x, bool bot)
     {
-        if (quads.Count == 1)
-        {
-            upperQuad = quads[0];
-            leftQuad = quads[0];
-            rightQuad = quads[0];
-            bottomQuad = quads[0];
-            return;
-        }
+        Quad obj = null;
 
         for (int i = 0; i < quads.Count; i++)
         {
-            if (quads[i].x == 0)
+            if (quads[i].x == x)
             {
-                if (bottomQuad == null || quads[i].y < bottomQuad.y)
-                    bottomQuad = quads[i];
-                if (upperQuad == null || quads[i].y > upperQuad.y)
-                    upperQuad = quads[i];
-            }
-            if (quads[i].y == 0)
-            {
-                if (leftQuad == null || quads[i].x < leftQuad.x)
-                    leftQuad = quads[i];
-                if (rightQuad == null || quads[i].x > rightQuad.x)
-                    rightQuad = quads[i];
+                if (obj == null)
+                    obj = quads[i];
+                else if (bot)
+                {
+                    if (quads[i].y < obj.y)
+                        obj = quads[i];
+                }
+                else if (quads[i].y > obj.y)
+                    obj = quads[i];
             }
         }
+        return obj;
+    }
+
+    public Quad calcHorizontalBorder(int y, bool left)
+    {
+        Quad obj = null;
+
+        for (int i = 0; i < quads.Count; i++)
+        {
+            if (quads[i].y == y)
+            {
+                if (obj == null)
+                    obj = quads[i];
+                else if (left)
+                {
+                    if (quads[i].x < obj.x)
+                        obj = quads[i];
+                }
+                else if (quads[i].x > obj.x)
+                    obj = quads[i];
+            }
+        }
+        return obj;
     }
 }

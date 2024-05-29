@@ -113,24 +113,45 @@ public class Generator : MonoBehaviour
         int y = 0;
         bool[] visited = new bool[rooms.Length];
 
-        foreach (Room room in rooms)
-            room.calcBorderQuads();
+        Quad start;
+        Quad end;
+        int index;
 
         for (int i = 0; i < rooms.Length; i++)
         {
+            //Debug.Log("------------------------------------------------------------------------------------------");
             y++;
+
             if (rooms[i].up != null && !visited[rooms[i].up.id] && matrix[i][rooms[i].up.id])
             {
-                ts.setDoorTile(rooms[i].upperQuad.pivot + Vector2.up * 1.5f, false);
-                ts.setDoorTile(rooms[rooms[i].up.id].bottomQuad.pivot - Vector2.up * 1.5f, false);
-                ts.changeDoorWalls(rooms[rooms[i].up.id].bottomQuad.pivot - Vector2.up * 1.5f, 1);
+                index = Random.Range(Mathf.Max(rooms[i].minX, rooms[rooms[i].up.id].minX), Mathf.Min(rooms[i].maxX, rooms[rooms[i].up.id].maxX));
 
-                pivot1 = rooms[i].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
-                pivot2 = rooms[rooms[i].up.id].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                //Debug.Log("INDEX = " + index);
+                //Debug.Log(Mathf.Max(rooms[i].minX, rooms[rooms[i].up.id].minX));
+                //Debug.Log(Mathf.Min(rooms[i].maxX, rooms[rooms[i].up.id].maxX));
+
+                //Debug.Log("Room: " + i);
+                //Debug.Log("Room: " + rooms[i].up.id);
+
+                start = rooms[i].calcVerticalBorder(index, false);
+
+                Debug.Log("TOP: " + start.x);
+                Debug.Log("TOP: " + start.y);
+
+                end = rooms[rooms[i].up.id].calcVerticalBorder(index, true);
+
+                //Debug.Log("BORDER START: " + start.x + " " + start.y);
+                //Debug.Log("BORDER END: " + end.x + " " + end.y);
+
+                ts.setDoorTile(start.pivot + Vector2.up * 1.5f, false);
+                ts.setDoorTile(end.pivot - Vector2.up * 1.5f, false);
+                ts.changeDoorWalls(end.pivot - Vector2.up * 1.5f, 1);
+
+                pivot1 = start.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
+                pivot2 = end.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.y < pivot2.y)
                 {
-
                     ts.createCorridor(pivot1, true);
                     ts.createCorridor(pivot2, true);
 
@@ -138,7 +159,6 @@ public class Generator : MonoBehaviour
                     pivot2 += Vector2.down;
                     x++;
                     yield return null;
-
                 }
 
                 ts.createCorridor(pivot1, true);
@@ -146,27 +166,31 @@ public class Generator : MonoBehaviour
             }
             if (rooms[i].right != null && !visited[rooms[i].right.id] && matrix[i][rooms[i].right.id])
             {
-                ts.setDoorTile(rooms[i].rightQuad.pivot + Vector2.right * 1.5f, true);
-                ts.setDoorTile(rooms[rooms[i].right.id].leftQuad.pivot - Vector2.right * 1.5f, true);
+                index = Random.Range(Mathf.Max(rooms[i].minY, rooms[rooms[i].right.id].minY), Mathf.Min(rooms[i].maxY, rooms[rooms[i].right.id].maxY));
 
-                ts.changeDoorWalls(rooms[i].rightQuad.pivot + Vector2.right * 1.5f, 2);
-                ts.changeDoorWalls(rooms[rooms[i].right.id].leftQuad.pivot - Vector2.right * 1.5f, 3);
+                Debug.Log(index);
 
-                pivot1 = rooms[i].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
-                pivot2 = rooms[rooms[i].right.id].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                start = rooms[i].calcHorizontalBorder(index, false);
+                end = rooms[rooms[i].right.id].calcHorizontalBorder(index, true);
+
+                ts.setDoorTile(start.pivot + Vector2.right * 1.5f, true);
+                ts.setDoorTile(end.pivot - Vector2.right * 1.5f, true);
+
+                ts.changeDoorWalls(start.pivot + Vector2.right * 1.5f, 2);
+                ts.changeDoorWalls(end.pivot - Vector2.right * 1.5f, 3);
+
+                pivot1 = start.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                pivot2 = end.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.x < pivot2.x)
                 {
-
                     ts.createCorridor(pivot1, false);
                     ts.createCorridor(pivot2, false);
-
 
                     pivot1 = pivot1 + Vector2.right;
                     pivot2 = pivot2 + Vector2.left;
                     x++;
                     yield return null;
-
                 }
 
                 ts.createCorridor(pivot1, false);
@@ -174,17 +198,25 @@ public class Generator : MonoBehaviour
             }
             if (rooms[i].down != null && !visited[rooms[i].down.id] && matrix[i][rooms[i].down.id])
             {
-                ts.setDoorTile(rooms[i].bottomQuad.pivot - Vector2.up * 1.5f, false);
-                ts.setDoorTile(rooms[rooms[i].down.id].upperQuad.pivot + Vector2.up * 1.5f, false);
-                ts.changeDoorWalls(rooms[i].bottomQuad.pivot - Vector2.up * 1.5f, 1);
+                index = Random.Range(Mathf.Max(rooms[i].minX, rooms[rooms[i].down.id].minX), Mathf.Min(rooms[i].maxX, rooms[rooms[i].down.id].maxX));
 
+                Debug.Log(index);
 
-                pivot1 = rooms[i].bottomQuad.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
-                pivot2 = rooms[rooms[i].down.id].upperQuad.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
+                start = rooms[i].calcVerticalBorder(index, true);
+                end = rooms[rooms[i].down.id].calcVerticalBorder(index, false);
+
+                Debug.Log("DOWN " + start.x);
+                Debug.Log("DOWN " + start.y);
+
+                ts.setDoorTile(start.pivot - Vector2.up * 1.5f, false);
+                ts.setDoorTile(end.pivot + Vector2.up * 1.5f, false);
+                ts.changeDoorWalls(start.pivot - Vector2.up * 1.5f, 1);
+
+                pivot1 = start.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                pivot2 = end.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.y > pivot2.y)
                 {
-
                     ts.createCorridor(pivot1, true);
                     ts.createCorridor(pivot2, true);
 
@@ -192,24 +224,30 @@ public class Generator : MonoBehaviour
                     pivot2 = pivot2 + Vector2.up;
                     x++;
                     yield return null;
-
                 }
+
                 ts.createCorridor(pivot1, true);
             }
             if (rooms[i].left != null && !visited[rooms[i].left.id] && matrix[i][rooms[i].left.id])
             {
-                ts.setDoorTile(rooms[i].leftQuad.pivot - Vector2.right * 1.5f, true);
-                ts.setDoorTile(rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 1.5f, true);
+                index = Random.Range(Mathf.Max(rooms[i].minY, rooms[rooms[i].left.id].minY), Mathf.Min(rooms[i].maxY, rooms[rooms[i].left.id].maxY));
 
-                ts.changeDoorWalls(rooms[i].leftQuad.pivot - Vector2.right * 1.5f, 3);
-                ts.changeDoorWalls(rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 1.5f, 2);
+                Debug.Log(index);
 
-                pivot1 = rooms[i].leftQuad.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
-                pivot2 = rooms[rooms[i].left.id].rightQuad.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                start = rooms[i].calcHorizontalBorder(index, true);
+                end = rooms[rooms[i].left.id].calcHorizontalBorder(index, false);
+
+                ts.setDoorTile(start.pivot - Vector2.right * 1.5f, true);
+                ts.setDoorTile(end.pivot + Vector2.right * 1.5f, true);
+
+                ts.changeDoorWalls(start.pivot - Vector2.right * 1.5f, 3);
+                ts.changeDoorWalls(end.pivot + Vector2.right * 1.5f, 2);
+
+                pivot1 = start.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                pivot2 = end.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.x > pivot2.x)
                 {
-
                     ts.createCorridor(pivot1, false);
                     ts.createCorridor(pivot2, false);
 
@@ -217,10 +255,10 @@ public class Generator : MonoBehaviour
                     pivot2 = pivot2 + Vector2.right;
                     x++;
                     yield return null;
-
                 }
                 ts.createCorridor(pivot1, false);
             }
+
             x = 0;
             visited[i] = true;
         }
@@ -312,8 +350,8 @@ public class Generator : MonoBehaviour
 
             for (int i = 0; i < rooms.Length; i++)
             {
-                if (rooms[i].x == currentCol)                
-                    rooms[i].shift(Vector2.right * totalShift);                
+                if (rooms[i].x == currentCol)
+                    rooms[i].shift(Vector2.right * totalShift);
             }
         }
 

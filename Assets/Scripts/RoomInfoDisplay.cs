@@ -14,9 +14,9 @@ public class RoomInfoDisplay : MonoBehaviour
     public int x;
     public int y;
 
-    public Vector2 upperQuad;
-    public Vector2 leftQuad;
-    public Vector2 rightQuad;
-    public Vector2 bottomQuad;
+    public int minX;
+    public int maxX;
+    public int minY;
+    public int maxY;
 
 }
