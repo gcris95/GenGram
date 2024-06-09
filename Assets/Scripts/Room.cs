@@ -1054,7 +1054,7 @@ public class Room
         }
     }
 
-    public Quad calcVerticalBorder(int x, bool bot)
+    public Vector2 calcVerticalBorder(int x, bool bot)
     {
         Quad obj = null;
 
@@ -1073,10 +1073,10 @@ public class Room
                     obj = quads[i];
             }
         }
-        return obj;
+        return obj.pivot;
     }
 
-    public Quad calcHorizontalBorder(int y, bool left)
+    public Vector2 calcHorizontalBorder(int y, bool left)
     {
         Quad obj = null;
 
@@ -1095,6 +1095,6 @@ public class Room
                     obj = quads[i];
             }
         }
-        return obj;
+        return obj.pivot;
     }
 }

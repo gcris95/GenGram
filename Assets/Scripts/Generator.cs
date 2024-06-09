@@ -113,8 +113,8 @@ public class Generator : MonoBehaviour
         int y = 0;
         bool[] visited = new bool[rooms.Length];
 
-        Quad start;
-        Quad end;
+        Vector2 start;
+        Vector2 end;
         int index;
 
         for (int i = 0; i < rooms.Length; i++)
@@ -143,12 +143,12 @@ public class Generator : MonoBehaviour
                 //Debug.Log("BORDER START: " + start.x + " " + start.y);
                 //Debug.Log("BORDER END: " + end.x + " " + end.y);
 
-                ts.setDoorTile(start.pivot + Vector2.up * 1.5f, false);
-                ts.setDoorTile(end.pivot - Vector2.up * 1.5f, false);
-                ts.changeDoorWalls(end.pivot - Vector2.up * 1.5f, 1);
+                ts.setDoorTile(start + Vector2.up * 1.5f, false);
+                ts.setDoorTile(end - Vector2.up * 1.5f, false);
+                ts.changeDoorWalls(end - Vector2.up * 1.5f, 1);
 
-                pivot1 = start.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
-                pivot2 = end.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                pivot1 = start + Vector2.up * 2.5f + Vector2.right * 0.5f;
+                pivot2 = end + Vector2.down * 2.5f + Vector2.right * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.y < pivot2.y)
                 {
@@ -173,14 +173,14 @@ public class Generator : MonoBehaviour
                 start = rooms[i].calcHorizontalBorder(index, false);
                 end = rooms[rooms[i].right.id].calcHorizontalBorder(index, true);
 
-                ts.setDoorTile(start.pivot + Vector2.right * 1.5f, true);
-                ts.setDoorTile(end.pivot - Vector2.right * 1.5f, true);
+                ts.setDoorTile(start + Vector2.right * 1.5f, true);
+                ts.setDoorTile(end - Vector2.right * 1.5f, true);
 
-                ts.changeDoorWalls(start.pivot + Vector2.right * 1.5f, 2);
-                ts.changeDoorWalls(end.pivot - Vector2.right * 1.5f, 3);
+                ts.changeDoorWalls(start + Vector2.right * 1.5f, 2);
+                ts.changeDoorWalls(end - Vector2.right * 1.5f, 3);
 
-                pivot1 = start.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
-                pivot2 = end.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                pivot1 = start + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                pivot2 = end + Vector2.left * 2.5f + Vector2.up * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.x < pivot2.x)
                 {
@@ -208,12 +208,12 @@ public class Generator : MonoBehaviour
                 Debug.Log("DOWN " + start.x);
                 Debug.Log("DOWN " + start.y);
 
-                ts.setDoorTile(start.pivot - Vector2.up * 1.5f, false);
-                ts.setDoorTile(end.pivot + Vector2.up * 1.5f, false);
-                ts.changeDoorWalls(start.pivot - Vector2.up * 1.5f, 1);
+                ts.setDoorTile(start - Vector2.up * 1.5f, false);
+                ts.setDoorTile(end + Vector2.up * 1.5f, false);
+                ts.changeDoorWalls(start - Vector2.up * 1.5f, 1);
 
-                pivot1 = start.pivot + Vector2.down * 2.5f + Vector2.right * 0.5f;
-                pivot2 = end.pivot + Vector2.up * 2.5f + Vector2.right * 0.5f;
+                pivot1 = start + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                pivot2 = end + Vector2.up * 2.5f + Vector2.right * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.y > pivot2.y)
                 {
@@ -237,14 +237,14 @@ public class Generator : MonoBehaviour
                 start = rooms[i].calcHorizontalBorder(index, true);
                 end = rooms[rooms[i].left.id].calcHorizontalBorder(index, false);
 
-                ts.setDoorTile(start.pivot - Vector2.right * 1.5f, true);
-                ts.setDoorTile(end.pivot + Vector2.right * 1.5f, true);
+                ts.setDoorTile(start - Vector2.right * 1.5f, true);
+                ts.setDoorTile(end + Vector2.right * 1.5f, true);
 
-                ts.changeDoorWalls(start.pivot - Vector2.right * 1.5f, 3);
-                ts.changeDoorWalls(end.pivot + Vector2.right * 1.5f, 2);
+                ts.changeDoorWalls(start - Vector2.right * 1.5f, 3);
+                ts.changeDoorWalls(end + Vector2.right * 1.5f, 2);
 
-                pivot1 = start.pivot + Vector2.left * 2.5f + Vector2.up * 0.5f;
-                pivot2 = end.pivot + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                pivot1 = start + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                pivot2 = end + Vector2.right * 2.5f + Vector2.up * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.x > pivot2.x)
                 {
