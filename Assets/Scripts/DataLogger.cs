@@ -12,7 +12,7 @@ public class DataLogger
         Log log = new Log(settings, mapData, fitnessData, time, generations, g.chromosome.mutations);
 
         string json = JsonUtility.ToJson(log);
-        System.IO.File.WriteAllText("/Log" + "" + ".json", json);
+        //System.IO.File.WriteAllText("/Log" + "" + ".json", json);
     }
 }
 
