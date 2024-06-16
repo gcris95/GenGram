@@ -371,7 +371,6 @@ public class TileSetting : MonoBehaviour
     public void setDoorTile(Vector2 position, bool vertical)
     {
         Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y));
-        tilemap.SetTile(cellPosition, floor);
 
         if (vertical)
             doorTilemap.SetTile(cellPosition, verticalDoor);
@@ -385,20 +384,20 @@ public class TileSetting : MonoBehaviour
         if (vertical)
         {
             Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(position.x - 1, position.y));
-            tilemap.SetTile(cellPosition, sxSide);
+            collTilemap.SetTile(cellPosition, sxSide);
             cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y));
             tilemap.SetTile(cellPosition, floor);
             cellPosition = tilemap.WorldToCell(new Vector3(position.x + 1, position.y));
-            tilemap.SetTile(cellPosition, dxSide);
+            collTilemap.SetTile(cellPosition, dxSide);
         }
         else
         {
             Vector3Int cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y + 1));
-            tilemap.SetTile(cellPosition, topSide);
+            collTilemap.SetTile(cellPosition, topSide);
             cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y));
             tilemap.SetTile(cellPosition, floor);
             cellPosition = tilemap.WorldToCell(new Vector3(position.x, position.y - 1));
-            tilemap.SetTile(cellPosition, botSide);
+            collTilemap.SetTile(cellPosition, botSide);
         }
     }
 
@@ -410,26 +409,45 @@ public class TileSetting : MonoBehaviour
             cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x - 1, doorPosition.y));
             collTilemap.SetTile(cellPosition, exBotSXAngle);
 
+            cellPosition = tilemap.WorldToCell(doorPosition);
+            tilemap.SetTile(cellPosition, floor);
+            collTilemap.SetTile(cellPosition, null);
+
             cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x + 1, doorPosition.y));
             collTilemap.SetTile(cellPosition, exBotDXAngle);
         }
         else if (type == 2)
         {
 
-            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y + 1));            
-            collTilemap.SetTile(cellPosition, topSide);                              
-            
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y + 1));
+            collTilemap.SetTile(cellPosition, topSide);
+
+            cellPosition = tilemap.WorldToCell(doorPosition);
+            tilemap.SetTile(cellPosition, floor);
+            collTilemap.SetTile(cellPosition, null);
+
             cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y - 1));
             collTilemap.SetTile(cellPosition, exBotDXAngle);
         }
-        else
+        else if (type == 3)
         {
-            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y+1));
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y + 1));
             collTilemap.SetTile(cellPosition, topSide);
 
-            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y-1));
+            cellPosition = tilemap.WorldToCell(doorPosition);
+            tilemap.SetTile(cellPosition, floor);
+            collTilemap.SetTile(cellPosition, null);
+
+            cellPosition = tilemap.WorldToCell(new Vector3(doorPosition.x, doorPosition.y - 1));
             collTilemap.SetTile(cellPosition, exBotSXAngle);
         }
+        else
+        {
+            cellPosition = tilemap.WorldToCell(doorPosition);
+            tilemap.SetTile(cellPosition, floor);
+            collTilemap.SetTile(cellPosition, null);
+        }
+
     }
 
 

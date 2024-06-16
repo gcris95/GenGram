@@ -115,6 +115,8 @@ public class Generator : MonoBehaviour
         Vector2 start;
         Vector2 end;
         int index;
+        bool crossedStart = false;
+        bool crossedEnd = false;
 
         for (int i = 0; i < rooms.Length; i++)
         {
@@ -128,15 +130,18 @@ public class Generator : MonoBehaviour
             if (rooms[i].up != null && !visited[rooms[i].up.id] && matrix[i][rooms[i].up.id])
             {
                 index = Random.Range(Mathf.Max(rooms[i].minX, rooms[rooms[i].up.id].minX), Mathf.Min(rooms[i].maxX, rooms[rooms[i].up.id].maxX));
-
                 start = rooms[i].calcVerticalBorder(index, false);
+                crossedStart = false;
+                crossedEnd = false;
 
                 if (rooms[i].leftCorridor.x != float.MaxValue && start.x < rooms[i].leftCorridor.x && start.y < rooms[i].leftCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(start.x, rooms[i].leftCorridor.y);
                 }
                 else if (rooms[i].rightCorridor.x != float.MaxValue && start.x > rooms[i].leftCorridor.x && start.y < rooms[i].leftCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(start.x, rooms[i].rightCorridor.y);
                 }
 
@@ -144,22 +149,36 @@ public class Generator : MonoBehaviour
 
                 if (rooms[i].up.leftCorridor.x != float.MaxValue && end.x < rooms[i].up.leftCorridor.x && end.y > rooms[i].up.leftCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(end.x, rooms[i].up.leftCorridor.y);
                 }
                 else if (rooms[i].up.rightCorridor.x != float.MaxValue && end.x > rooms[i].up.leftCorridor.x && end.y > rooms[i].up.leftCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(end.x, rooms[i].up.rightCorridor.y);
                 }
 
                 rooms[i].topCorridor = start;
                 rooms[i].up.bottomCorridor = end;
 
-                ts.setDoorTile(start + Vector2.up * 1.5f, false);
-                ts.setDoorTile(end - Vector2.up * 1.5f, false);
-                ts.changeDoorWalls(end - Vector2.up * 1.5f, 1);
+                if (!crossedStart)
+                    ts.setDoorTile(start + Vector2.up * 1.5f, false);
 
+                ts.changeDoorWalls(start + Vector2.up * 1.5f, 4);
                 pivot1 = start + Vector2.up * 2.5f + Vector2.right * 0.5f;
-                pivot2 = end + Vector2.down * 2.5f + Vector2.right * 0.5f;
+
+                if (!crossedEnd)
+                {
+                    ts.setDoorTile(end - Vector2.up * 1.5f, false);
+                    ts.changeDoorWalls(end - Vector2.up * 1.5f, 1);
+                    pivot2 = end + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                }
+                else
+                {
+                    ts.changeDoorWalls(end - Vector2.up * 0.5f, 1);
+                    pivot2 = end + Vector2.down * 1.5f + Vector2.right * 0.5f;
+                }
+
 
                 while (pivot1 != pivot2 && pivot1.y < pivot2.y)
                 {
@@ -173,22 +192,22 @@ public class Generator : MonoBehaviour
                 }
 
                 ts.createCorridor(pivot1, true);
-
             }
             if (rooms[i].down != null && !visited[rooms[i].down.id] && matrix[i][rooms[i].down.id])
             {
                 index = Random.Range(Mathf.Max(rooms[i].minX, rooms[rooms[i].down.id].minX), Mathf.Min(rooms[i].maxX, rooms[rooms[i].down.id].maxX));
-
-                Debug.Log(i + "index: " + index);
-
                 start = rooms[i].calcVerticalBorder(index, true);
+                crossedStart = false;
+                crossedEnd = false;
+
                 if (rooms[i].leftCorridor.x != float.MaxValue && start.x < rooms[i].leftCorridor.x && start.y > rooms[i].leftCorridor.y)
                 {
-                    Debug.Log(i + "leftcorridor: " + rooms[i].leftCorridor.x);
+                    crossedStart = true;
                     start = new Vector2(start.x, rooms[i].leftCorridor.y);
                 }
                 else if (rooms[i].rightCorridor.x != float.MaxValue && start.x > rooms[i].rightCorridor.x && start.y > rooms[i].rightCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(start.x, rooms[i].rightCorridor.y);
                 }
 
@@ -196,21 +215,35 @@ public class Generator : MonoBehaviour
 
                 if (rooms[i].down.leftCorridor.x != float.MaxValue && end.x < rooms[i].down.leftCorridor.x && end.y < rooms[i].down.leftCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(end.x, rooms[i].down.leftCorridor.y);
                 }
                 else if (rooms[i].down.rightCorridor.x != float.MaxValue && end.x > rooms[i].down.rightCorridor.x && end.y < rooms[i].down.rightCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(end.x, rooms[i].down.rightCorridor.y);
                 }
 
                 rooms[i].bottomCorridor = start;
                 rooms[i].down.topCorridor = end;
 
-                ts.setDoorTile(start - Vector2.up * 1.5f, false);
-                ts.setDoorTile(end + Vector2.up * 1.5f, false);
-                ts.changeDoorWalls(start - Vector2.up * 1.5f, 1);
+                if (!crossedStart)
+                {
+                    ts.setDoorTile(start + Vector2.down * 1.5f, false);
+                    ts.changeDoorWalls(start + Vector2.down * 1.5f, 1);
 
-                pivot1 = start + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                    pivot1 = start + Vector2.down * 2.5f + Vector2.right * 0.5f;
+                }
+                else
+                {
+                    ts.changeDoorWalls(start + Vector2.down * 0.5f, 1);
+                    pivot1 = start + Vector2.down * 1.5f + Vector2.right * 0.5f;
+                }
+
+                if (!crossedEnd)
+                    ts.setDoorTile(end + Vector2.up * 1.5f, false);
+
+                ts.changeDoorWalls(end + Vector2.up * 1.5f, 4);
                 pivot2 = end + Vector2.up * 2.5f + Vector2.right * 0.5f;
 
                 while (pivot1 != pivot2 && pivot1.y > pivot2.y)
@@ -229,18 +262,19 @@ public class Generator : MonoBehaviour
             if (rooms[i].right != null && !visited[rooms[i].right.id] && matrix[i][rooms[i].right.id])
             {
                 index = Random.Range(Mathf.Max(rooms[i].minY, rooms[rooms[i].right.id].minY), Mathf.Min(rooms[i].maxY, rooms[rooms[i].right.id].maxY));
-
-                //Debug.Log(index);
-
-
                 start = rooms[i].calcHorizontalBorder(index, false);
+
+                crossedStart = false;
+                crossedEnd = false;
 
                 if (rooms[i].topCorridor.x != float.MaxValue && start.x < rooms[i].topCorridor.x && start.y > rooms[i].topCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(rooms[i].topCorridor.x, start.y);
                 }
                 else if (rooms[i].bottomCorridor.x != float.MaxValue && start.x < rooms[i].bottomCorridor.x && start.y < rooms[i].bottomCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(rooms[i].bottomCorridor.x, start.y);
                 }
 
@@ -248,24 +282,42 @@ public class Generator : MonoBehaviour
 
                 if (rooms[i].right.topCorridor.x != float.MaxValue && end.x > rooms[i].right.topCorridor.x && end.y > rooms[i].right.topCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(rooms[i].right.topCorridor.x, end.y);
                 }
                 else if (rooms[i].right.bottomCorridor.x != float.MaxValue && end.x > rooms[i].right.bottomCorridor.x && end.y < rooms[i].right.bottomCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(rooms[i].right.bottomCorridor.x, end.y);
                 }
 
                 rooms[i].rightCorridor = start;
                 rooms[i].right.leftCorridor = end;
 
-                ts.setDoorTile(start + Vector2.right * 1.5f, true);
-                ts.setDoorTile(end - Vector2.right * 1.5f, true);
+                if (!crossedStart)
+                {
+                    ts.setDoorTile(start + Vector2.right * 1.5f, true);
+                    ts.changeDoorWalls(start + Vector2.right * 1.5f, 2);
+                    pivot1 = start + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                }
+                else
+                {
+                    ts.changeDoorWalls(start + Vector2.right * 0.5f, 2);
+                    pivot1 = start + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                }
 
-                ts.changeDoorWalls(start + Vector2.right * 1.5f, 2);
-                ts.changeDoorWalls(end - Vector2.right * 1.5f, 3);
 
-                pivot1 = start + Vector2.right * 2.5f + Vector2.up * 0.5f;
-                pivot2 = end + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                if (!crossedEnd)
+                {
+                    ts.setDoorTile(end + Vector2.left * 1.5f, true);
+                    ts.changeDoorWalls(end + Vector2.left * 1.5f, 3);
+                    pivot2 = end + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                }
+                else
+                {
+                    ts.changeDoorWalls(end + Vector2.left * 0.5f, 3);
+                    pivot2 = end + Vector2.left * 1.5f + Vector2.up * 0.5f;
+                }
 
                 while (pivot1 != pivot2 && pivot1.x < pivot2.x)
                 {
@@ -279,22 +331,23 @@ public class Generator : MonoBehaviour
                 }
 
                 ts.createCorridor(pivot1, false);
-
             }
             if (rooms[i].left != null && !visited[rooms[i].left.id] && matrix[i][rooms[i].left.id])
             {
                 index = Random.Range(Mathf.Max(rooms[i].minY, rooms[rooms[i].left.id].minY), Mathf.Min(rooms[i].maxY, rooms[rooms[i].left.id].maxY));
-
-                //Debug.Log(index);
-
                 start = rooms[i].calcHorizontalBorder(index, true);
+
+                crossedStart = false;
+                crossedEnd = false;
 
                 if (rooms[i].topCorridor.x != float.MaxValue && start.x > rooms[i].topCorridor.x && start.y > rooms[i].topCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(rooms[i].topCorridor.x, start.y);
                 }
                 else if (rooms[i].bottomCorridor.x != float.MaxValue && start.x > rooms[i].bottomCorridor.x && start.y < rooms[i].bottomCorridor.y)
                 {
+                    crossedStart = true;
                     start = new Vector2(rooms[i].bottomCorridor.x, start.y);
                 }
 
@@ -302,24 +355,44 @@ public class Generator : MonoBehaviour
 
                 if (rooms[i].left.topCorridor.x != float.MaxValue && end.x < rooms[i].left.topCorridor.x && end.y > rooms[i].left.topCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(rooms[i].left.topCorridor.x, end.y);
                 }
                 else if (rooms[i].left.bottomCorridor.x != float.MaxValue && end.x < rooms[i].left.bottomCorridor.x && end.y < rooms[i].left.bottomCorridor.y)
                 {
+                    crossedEnd = true;
                     end = new Vector2(rooms[i].left.bottomCorridor.x, end.y);
                 }
 
                 rooms[i].leftCorridor = start;
                 rooms[i].left.rightCorridor = end;
 
-                ts.setDoorTile(start - Vector2.right * 1.5f, true);
-                ts.setDoorTile(end + Vector2.right * 1.5f, true);
+                if (!crossedStart)
+                {
+                    ts.setDoorTile(start + Vector2.left * 1.5f, true);
+                    ts.changeDoorWalls(start + Vector2.left * 1.5f, 3);
 
-                ts.changeDoorWalls(start - Vector2.right * 1.5f, 3);
-                ts.changeDoorWalls(end + Vector2.right * 1.5f, 2);
+                    pivot1 = start + Vector2.left * 2.5f + Vector2.up * 0.5f;
+                }
+                else
+                {
+                    ts.changeDoorWalls(start + Vector2.left * 0.5f, 3);
+                    pivot1 = start + Vector2.left * 1.5f + Vector2.up * 0.5f;
+                }
 
-                pivot1 = start + Vector2.left * 2.5f + Vector2.up * 0.5f;
-                pivot2 = end + Vector2.right * 2.5f + Vector2.up * 0.5f;
+
+                if (!crossedEnd)
+                {
+                    ts.setDoorTile(end + Vector2.right * 1.5f, true);
+                    ts.changeDoorWalls(end + Vector2.right * 1.5f, 2);
+                    pivot2 = end + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                }
+                else
+                {
+                    ts.changeDoorWalls(end + Vector2.right * 1.5f, 2);
+                    pivot2 = end + Vector2.right * 2.5f + Vector2.up * 0.5f;
+                }
+
 
                 while (pivot1 != pivot2 && pivot1.x > pivot2.x)
                 {
