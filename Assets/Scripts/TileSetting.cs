@@ -376,7 +376,6 @@ public class TileSetting : MonoBehaviour
             doorTilemap.SetTile(cellPosition, verticalDoor);
         else
             doorTilemap.SetTile(cellPosition, door);
-
     }
 
     public void createCorridor(Vector2 position, bool vertical)
@@ -447,8 +446,5 @@ public class TileSetting : MonoBehaviour
             tilemap.SetTile(cellPosition, floor);
             collTilemap.SetTile(cellPosition, null);
         }
-
     }
-
-
 }

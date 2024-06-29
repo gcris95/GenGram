@@ -240,480 +240,184 @@ public class Room
             return;
         }
 
-        List<Quad> visited = new List<Quad>();
+        bool upNeighbour;
+        bool downNeighbour;
+        bool rightNeighbour;
+        bool leftNeighbour;
 
-        Quad current = quads[0];
-        while (current.up != null)
-            current = current.up;
+        bool upLeftNeighbour;
+        bool upRightNeighbour;
+        bool downLeftNeighbour;
+        bool downRightNeighbour;
 
-        Quad first = current;
-
-        int direction = 1;
-        bool exit = false;
-
-        //Debug.Log("Room: " + id);
-        //Debug.Log("First: " + first.x + " " + first.y);
-
-        while (!exit)
+        foreach (Quad q in quads)
         {
-            if (direction == 0)
+            upNeighbour = q.up != null;
+            downNeighbour = q.down != null;
+            leftNeighbour = q.left != null;
+            rightNeighbour = q.right != null;
+
+            if (upNeighbour && downNeighbour && leftNeighbour && rightNeighbour)
             {
-                if (current.left != null)
-                {
-                    direction = 3;
+                upLeftNeighbour = q.up.left != null;
+                upRightNeighbour = q.up.right != null;
+                downLeftNeighbour = q.down.left != null;
+                downRightNeighbour = q.down.right != null;
 
-                    switch (current.tileType)
-                    {
-                        // Se la tile è vuota
-                        case TileType.floorTile:
-                            current.tileType = TileType.exBotSxangleTile;                   // Assegna solo l'angolo in alto a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra
-                        case TileType.exBotDxangleTile:
-                            current.tileType = TileType.exDoubleBotAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra
-                        case TileType.exTopDxangleTile:
-                            current.tileType = TileType.exDoubleBotRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in basso a destra 
-                        case TileType.exTopSxangleTile:
-                            current.tileType = TileType.exDoubleLeftAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
-                        case TileType.exDoubleRightAngleTile:
-                            current.tileType = TileType.exTripleBopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
-                        case TileType.exDoubleTopAngleTile:
-                            current.tileType = TileType.exTripleTopSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
-                        case TileType.exDoubleTopRightAngleTile:
-                            current.tileType = TileType.exTripleBotSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha gli altri 3 angoli
-                        case TileType.exTripleTopDxAngleTile:
-                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
-                            break;
-                        // Se la tile ha il bordo destro
-                        case TileType.dxBorderTile:
-                            current.tileType = TileType.rightBorderBotAngleTile;
-                            break;
-                        // Se la tile ha il bordo basso
-                        case TileType.topBorderTile:
-                            current.tileType = TileType.topBorderLeftAngleTile;
-                            break;
-                        //Se la tile ha il bordo destro e l'angolo basso
-                        case TileType.rightBorderTopAngleTile:
-                            current.tileType = TileType.rightBorderLeftAnglesTile;
-                            break;
-                        // Se la tile ha il bordo basso e l'angolo destro
-                        case TileType.topBorderRightAngleTile:
-                            current.tileType = TileType.topBorderBotAnglesTile;
-                            break;
-                        // Se la tile ha bordo basso e destro
-                        case TileType.topDxangleTile:
-                            current.tileType = TileType.topDxangleAndAngleTile;
-                            break;
-                    }
-
-                    if (!visited.Contains(current))
-                        visited.Add(current);
-
-                    current = current.left;
-                    continue;
-                }
-
-                switch (current.tileType)
-                {
-                    case TileType.floorTile:
-                        current.tileType = TileType.sxBorderTile;
-                        break;
-                    case TileType.topBorderTile:
-                        current.tileType = TileType.topSxangleTile;
-                        break;
-                    case TileType.botBorderTile:
-                        current.tileType = TileType.botSxangleTile;
-                        break;
-                    case TileType.topbotborder:
-                        current.tileType = TileType.uRightTile;
-                        break;
-                    case TileType.botDxangleTile:
-                        current.tileType = TileType.uUpTile;
-                        break;
-                    case TileType.topDxangleTile:
-                        current.tileType = TileType.uBotTile;
-                        break;
-                    case TileType.exTopDxangleTile:
-                        current.tileType = TileType.leftBorderTopAngleTile;
-                        break;
-                    case TileType.exBotDxangleTile:
-                        current.tileType = TileType.leftBorderBotAngleTile;
-                        break;
-                    case TileType.exDoubleRightAngleTile:
-                        current.tileType = TileType.leftBorderRightAnglesTile;
-                        break;
-                    case TileType.botBorderRightAngleTile:
-                        current.tileType = TileType.botSxangleAndAngleTile;
-                        break;
-                    case TileType.topBorderRightAngleTile:
-                        current.tileType = TileType.topSxangleAndAngleTile;
-                        break;
-                    case TileType.dxBorderTile:
-                        current.tileType = TileType.leftrightborder;
-                        break;
-                }
-
-                if (current.up == null)
-                {
-                    direction = 1;
-                    continue;
-                }
-
-                if (current == first && visited.Contains(current.up))
-                    exit = true;
-
-                if (!visited.Contains(current))
-                    visited.Add(current);
-
-                current = current.up;
-            }
-            else if (direction == 1)
-            {
-                if (current.up != null)
-                {
-                    direction = 0;
-
-                    switch (current.tileType)
-                    {
-                        // Se la tile è vuota
-                        case TileType.floorTile:
-                            current.tileType = TileType.exTopSxangleTile;                   // Assegna solo l'angolo in alto a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra
-                        case TileType.exTopDxangleTile:
-                            current.tileType = TileType.exDoubleTopAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra
-                        case TileType.exBotSxangleTile:
-                            current.tileType = TileType.exDoubleLeftAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in basso a destra 
-                        case TileType.exBotDxangleTile:
-                            current.tileType = TileType.exDoubleTopRightAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
-                        case TileType.exDoubleBotRightAngleTile:
-                            current.tileType = TileType.exTripleTopSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
-                        case TileType.exDoubleRightAngleTile:
-                            current.tileType = TileType.exTripleTopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
-                        case TileType.exDoubleBotAngleTile:
-                            current.tileType = TileType.exTripleBotSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha gli altri 3 angoli
-                        case TileType.exTripleBopDxAngleTile:
-                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
-                            break;
-                        // Se la tile ha il bordo destro
-                        case TileType.dxBorderTile:
-                            current.tileType = TileType.rightBorderTopAngleTile;
-                            break;
-                        // Se la tile ha il bordo basso
-                        case TileType.botBorderTile:
-                            current.tileType = TileType.botBorderLeftAngleTile;
-                            break;
-                        //Se la tile ha il bordo destro e l'angolo basso
-                        case TileType.rightBorderBotAngleTile:
-                            current.tileType = TileType.rightBorderLeftAnglesTile;
-                            break;
-                        // Se la tile ha il bordo basso e l'angolo destro
-                        case TileType.botBorderRightAngleTile:
-                            current.tileType = TileType.botBorderTopAnglesTile;
-                            break;
-                        // Se la tile ha bordo basso e destro
-                        case TileType.botDxangleTile:
-                            current.tileType = TileType.botDxangleAndAngleTile;
-                            break;
-                    }
-
-                    if (!visited.Contains(current))
-                        visited.Add(current);
-                    current = current.up;
-                    continue;
-                }
-
-                switch (current.tileType)
-                {
-                    case TileType.floorTile:
-                        current.tileType = TileType.topBorderTile;
-                        break;
-                    case TileType.sxBorderTile:
-                        current.tileType = TileType.topSxangleTile;
-                        break;
-                    case TileType.botSxangleTile:
-                        current.tileType = TileType.uRightTile;
-                        break;
-                    case TileType.exTopSxangleTile:
-                        current.tileType = TileType.rightBorderTopAngleTile;
-                        break;
-                    case TileType.exBotSxangleTile:
-                        current.tileType = TileType.topBorderLeftAngleTile;
-                        break;
-                    case TileType.exDoubleLeftAngleTile:
-                        current.tileType = TileType.rightBorderLeftAnglesTile;
-                        break;
-                    case TileType.leftBorderBotAngleTile:
-                        current.tileType = TileType.topSxangleAndAngleTile;
-                        break;
-                    case TileType.rightBorderBotAngleTile:
-                        current.tileType = TileType.topDxangleAndAngleTile;
-                        break;
-                    case TileType.botBorderTile:
-                        current.tileType = TileType.topbotborder;
-                        break;
-                }
-
-                if (current.right == null)
-                {
-                    direction = 2;
-                    continue;
-                }
-
-                if (current == first && visited.Contains(current.right))
-                    exit = true;
-
-                if (!visited.Contains(current))
-                    visited.Add(current);
-                current = current.right;
+                if (upLeftNeighbour && upRightNeighbour && downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.floorTile;
+                else if (!upLeftNeighbour && upRightNeighbour && downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exTopSxangleTile;
+                else if (upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exTopDxangleTile;
+                else if (upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exBotSxangleTile;
+                else if (upLeftNeighbour && upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exBotDxangleTile;
+                else if (!upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exDoubleTopAngleTile;
+                else if (!upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exDoubleLeftAngleTile;
+                else if (upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exDoubleRightAngleTile;
+                else if (upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exDoubleBotAngleTile;
+                else if (!upLeftNeighbour && upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exDoubleTopRightAngleTile;
+                else if (upLeftNeighbour && !upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exDoubleBotRightAngleTile;
+                else if (!upLeftNeighbour && !upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.exTripleTopSxAngleTile;
+                else if (!upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exTripleTopDxAngleTile;
+                else if (upLeftNeighbour && !upRightNeighbour && !downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exTripleBopDxAngleTile;
+                else if (!upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.exTripleBotSxAngleTile;
+                else
+                    q.tileType = TileType.exAllAngleTile;
 
             }
-            else if (direction == 2)
+            else if (!upNeighbour && downNeighbour && leftNeighbour && rightNeighbour)
             {
-                if (current.right != null)
-                {
-                    direction = 1;
+                downLeftNeighbour = q.down.left != null;
+                downRightNeighbour = q.down.right != null;
 
-                    switch (current.tileType)
-                    {
-                        // Se la tile è vuota
-                        case TileType.floorTile:
-                            current.tileType = TileType.exTopDxangleTile;                   // Assegna solo l'angolo in alto a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra
-                        case TileType.exTopSxangleTile:
-                            current.tileType = TileType.exDoubleTopAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra
-                        case TileType.exBotSxangleTile:
-                            current.tileType = TileType.exDoubleBotRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in basso a destra 
-                        case TileType.exBotDxangleTile:
-                            current.tileType = TileType.exDoubleRightAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
-                        case TileType.exDoubleLeftAngleTile:
-                            current.tileType = TileType.exTripleTopSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
-                        case TileType.exDoubleBotAngleTile:
-                            current.tileType = TileType.exTripleBopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
-                        case TileType.exDoubleTopRightAngleTile:
-                            current.tileType = TileType.exTripleTopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha gli altri 3 angoli
-                        case TileType.exTripleBotSxAngleTile:
-                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
-                            break;
-                        // Se la tile ha il bordo destro
-                        case TileType.sxBorderTile:
-                            current.tileType = TileType.leftBorderTopAngleTile;
-                            break;
-                        // Se la tile ha il bordo basso
-                        case TileType.botBorderTile:
-                            current.tileType = TileType.botBorderRightAngleTile;
-                            break;
-                        //Se la tile ha il bordo destro e l'angolo basso
-                        case TileType.leftBorderBotAngleTile:
-                            current.tileType = TileType.leftBorderRightAnglesTile;
-                            break;
-                        // Se la tile ha il bordo basso e l'angolo destro
-                        case TileType.botBorderLeftAngleTile:
-                            current.tileType = TileType.botBorderTopAnglesTile;
-                            break;
-                        // Se la tile ha bordo basso e destro
-                        case TileType.botSxangleTile:
-                            current.tileType = TileType.botSxangleAndAngleTile;
-                            break;
-                    }
-
-                    if (!visited.Contains(current))
-                        visited.Add(current);
-                    current = current.right;
-                    continue;
-                }
-
-                switch (current.tileType)
-                {
-                    case TileType.floorTile:
-                        current.tileType = TileType.dxBorderTile;
-                        break;
-                    case TileType.topBorderTile:
-                        current.tileType = TileType.topDxangleTile;
-                        break;
-                    case TileType.topSxangleTile:
-                        current.tileType = TileType.uBotTile;
-                        break;
-                    case TileType.exTopSxangleTile:
-                        current.tileType = TileType.rightBorderTopAngleTile;
-                        break;
-                    case TileType.exBotSxangleTile:
-                        current.tileType = TileType.rightBorderBotAngleTile;
-                        break;
-                    case TileType.exDoubleLeftAngleTile:
-                        current.tileType = TileType.rightBorderLeftAnglesTile;
-                        break;
-                    case TileType.topBorderLeftAngleTile:
-                        current.tileType = TileType.topDxangleAndAngleTile;
-                        break;
-                    case TileType.sxBorderTile:
-                        current.tileType = TileType.leftrightborder;
-                        break;
-                }
-
-                if (current.down == null)
-                {
-                    direction = 3;
-                    continue;
-                }
-
-                if (current == first && visited.Contains(current.down))
-                    exit = true;
-
-                if (!visited.Contains(current))
-                    visited.Add(current);
-                current = current.down;
+                if (downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.topBorderTile;
+                else if (!downLeftNeighbour && downRightNeighbour)
+                    q.tileType = TileType.topBorderLeftAngleTile;
+                else if (downLeftNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.topBorderRightAngleTile;
+                else
+                    q.tileType = TileType.topBorderBotAnglesTile;
             }
-            else
+            else if (upNeighbour && downNeighbour && leftNeighbour && !rightNeighbour)
             {
-                if (current.down != null)
-                {
-                    direction = 2;
+                upLeftNeighbour = q.left.up != null;
+                downLeftNeighbour = q.left.down != null;
 
-                    switch (current.tileType)
-                    {
-                        // Se la tile è vuota
-                        case TileType.floorTile:
-                            current.tileType = TileType.exBotDxangleTile;                   // Assegna solo l'angolo in alto a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra
-                        case TileType.exBotSxangleTile:
-                            current.tileType = TileType.exDoubleBotAngleTile;               // Assegna l'angolo in alto a sinistra e a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra
-                        case TileType.exTopDxangleTile:
-                            current.tileType = TileType.exDoubleRightAngleTile;              // Assegna angolo in alto a sinistra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in basso a destra 
-                        case TileType.exTopSxangleTile:
-                            current.tileType = TileType.exDoubleTopRightAngleTile;          // Assegna angolo in alto a sinistra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a sinistra
-                        case TileType.exDoubleLeftAngleTile:
-                            current.tileType = TileType.exTripleBotSxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a sinistra
-                            break;
-                        // Se la tile ha già l'angolo in alto a destra e in basso a destra
-                        case TileType.exDoubleTopAngleTile:
-                            current.tileType = TileType.exTripleTopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha già l'angolo in basso a sinistra e in basso a destra
-                        case TileType.exDoubleBotRightAngleTile:
-                            current.tileType = TileType.exTripleBopDxAngleTile;             // Assegna angolo in alto a sinistra, in alto a destra e in basso a destra
-                            break;
-                        // Se la tile ha gli altri 3 angoli
-                        case TileType.exTripleTopSxAngleTile:
-                            current.tileType = TileType.exAllAngleTile;                     // Assegna tutti e 4
-                            break;
-                        // Se la tile ha il bordo destro
-                        case TileType.sxBorderTile:
-                            current.tileType = TileType.leftBorderBotAngleTile;
-                            break;
-                        // Se la tile ha il bordo basso
-                        case TileType.topBorderTile:
-                            current.tileType = TileType.topBorderRightAngleTile;
-                            break;
-                        //Se la tile ha il bordo destro e l'angolo basso
-                        case TileType.leftBorderTopAngleTile:
-                            current.tileType = TileType.leftBorderRightAnglesTile;
-                            break;
-                        // Se la tile ha il bordo basso e l'angolo destro
-                        case TileType.topBorderLeftAngleTile:
-                            current.tileType = TileType.topBorderBotAnglesTile;
-                            break;
-                        // Se la tile ha bordo basso e destro
-                        case TileType.topSxangleTile:
-                            current.tileType = TileType.topSxangleAndAngleTile;
-                            break;
-                    }
+                if (upLeftNeighbour && downLeftNeighbour)
+                    q.tileType = TileType.dxBorderTile;
+                else if (!upLeftNeighbour && downLeftNeighbour)
+                    q.tileType = TileType.rightBorderTopAngleTile;
+                else if (upLeftNeighbour && !downLeftNeighbour)
+                    q.tileType = TileType.rightBorderBotAngleTile;
+                else
+                    q.tileType = TileType.rightBorderLeftAnglesTile;
+            }
+            else if (upNeighbour && !downNeighbour && leftNeighbour && rightNeighbour)
+            {
+                upLeftNeighbour = q.up.left != null;
+                upRightNeighbour = q.up.right != null;
 
-                    if (!visited.Contains(current))
-                        visited.Add(current);
-                    current = current.down;
-                    continue;
-                }
+                if (upLeftNeighbour && upRightNeighbour)
+                    q.tileType = TileType.botBorderTile;
+                else if (!upLeftNeighbour && upRightNeighbour)
+                    q.tileType = TileType.botBorderLeftAngleTile;
+                else if (upLeftNeighbour && !upRightNeighbour)
+                    q.tileType = TileType.botBorderRightAngleTile;
+                else
+                    q.tileType = TileType.botBorderTopAnglesTile;
+            }
+            else if (upNeighbour && downNeighbour && !leftNeighbour && rightNeighbour)
+            {
+                upRightNeighbour = q.right.up != null;
+                downRightNeighbour = q.right.down != null;
 
-                switch (current.tileType)
-                {
-                    case TileType.floorTile:
-                        current.tileType = TileType.botBorderTile;
-                        break;
-                    case TileType.dxBorderTile:
-                        current.tileType = TileType.botDxangleTile;
-                        break;
-                    case TileType.topDxangleTile:
-                        current.tileType = TileType.uLeftTile;
-                        break;
-                    case TileType.exTopSxangleTile:
-                        current.tileType = TileType.botBorderLeftAngleTile;
-                        break;
-                    case TileType.exTopDxangleTile:
-                        current.tileType = TileType.botBorderRightAngleTile;
-                        break;
-                    case TileType.exDoubleTopAngleTile:
-                        current.tileType = TileType.botBorderTopAnglesTile;
-                        break;
-                    case TileType.rightBorderTopAngleTile:
-                        current.tileType = TileType.botDxangleAndAngleTile;
-                        break;
-                    case TileType.topBorderTile:
-                        current.tileType = TileType.topbotborder;
-                        break;
-                }
+                if (upRightNeighbour && downRightNeighbour)
+                    q.tileType = TileType.sxBorderTile;
+                else if (!upRightNeighbour && downRightNeighbour)
+                    q.tileType = TileType.leftBorderTopAngleTile;
+                else if (upRightNeighbour && !downRightNeighbour)
+                    q.tileType = TileType.leftBorderBotAngleTile;
+                else
+                    q.tileType = TileType.leftBorderRightAnglesTile;
+            }
+            else if (!upNeighbour && !downNeighbour && leftNeighbour && rightNeighbour)
+            {
+                q.tileType = TileType.topbotborder;
+            }
+            else if (upNeighbour && downNeighbour && !leftNeighbour && !rightNeighbour)
+            {
+                q.tileType = TileType.leftrightborder;
+            }
+            else if (!upNeighbour && downNeighbour && !leftNeighbour && rightNeighbour)
+            {
+                downRightNeighbour = q.right.down != null;
 
-                if (current.left == null)
-                {
-                    direction = 0;
-                    continue;
-                }
+                if (downRightNeighbour)
+                    q.tileType = TileType.topSxangleTile;
+                else
+                    q.tileType = TileType.topSxangleAndAngleTile;
+            }
+            else if (!upNeighbour && downNeighbour && leftNeighbour && !rightNeighbour)
+            {
+                downLeftNeighbour = q.left.down != null;
 
-                if (current == first && visited.Contains(current.left))
-                    exit = true;
+                if (downLeftNeighbour)
+                    q.tileType = TileType.topDxangleTile;
+                else
+                    q.tileType = TileType.topDxangleAndAngleTile;
+            }
+            else if (upNeighbour && !downNeighbour && !leftNeighbour && rightNeighbour)
+            {
+                upRightNeighbour = q.right.up != null;
 
-                if (!visited.Contains(current))
-                    visited.Add(current);
-                current = current.left;
+                if (upRightNeighbour)
+                    q.tileType = TileType.botSxangleTile;
+                else
+                    q.tileType = TileType.botSxangleAndAngleTile;
+            }
+            else if (upNeighbour && !downNeighbour && leftNeighbour && !rightNeighbour)
+            {
+                upLeftNeighbour = q.left.up != null;
+
+                if (upLeftNeighbour)
+                    q.tileType = TileType.botDxangleTile;
+                else
+                    q.tileType = TileType.botDxangleAndAngleTile;
+            }
+            else if (!upNeighbour && !downNeighbour && !leftNeighbour && rightNeighbour)
+            {
+                q.tileType = TileType.uRightTile;
+            }
+            else if (upNeighbour && !downNeighbour && !leftNeighbour && !rightNeighbour)
+            {
+                q.tileType = TileType.uUpTile;
+            }
+            else if (!upNeighbour && downNeighbour && !leftNeighbour && !rightNeighbour)
+            {
+                q.tileType = TileType.uBotTile;
+            }
+            else if (!upNeighbour && !downNeighbour && leftNeighbour && !rightNeighbour)
+            {
+                q.tileType = TileType.uLeftTile;
             }
         }
-
-
     }
+
+
 
     public void calcArea()
     {
