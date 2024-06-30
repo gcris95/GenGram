@@ -188,14 +188,9 @@ public class Chromosome
         #endregion
 
         malus = 0;
-        float x;
-        for (int i = 0; i < rooms.Length; i++)
-        {
-            x = Mathf.Max(Mathf.Abs(rooms[i].quads.Count - mean) - diff, 0);
-            //if (i != lastRoom)
-            malus += x;
-        }
-
+        for (int i = 0; i < rooms.Length; i++)        
+            malus += Mathf.Max(Mathf.Abs(rooms[i].quads.Count - mean) - diff, 0);            
+        
         malus /= rooms.Length;
 
         sizeFitness = 1 / (malus + 1);
@@ -287,7 +282,7 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        fitness = (roomsFitness + sizeFitness + distanceFitness + connectionFitness) / 4;
+        fitness = (roomsFitness + sizeFitness + distanceFitness + connectionFitness + hwFitness) / 5;
 
         #region Shape Variance TODO
 
