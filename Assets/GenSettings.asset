@@ -25,4 +25,4 @@ MonoBehaviour:
   firstLastDistance: {x: 6, y: 6}
   minMaxCover: 1
   coverPercentage: 75
-  hwRatio: 3
+  hwRatio: 0.25

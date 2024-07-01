@@ -11,7 +11,7 @@ public class Chromosome
 
     public float fitness;
     public float paretoFitness;
-    public float hwFitness, roomsFitness, sizeFitness, distanceFitness, connectionFitness;
+    public float hwFitness, roomsFitness, sizeFitness, distanceFitness, connectionFitness, bottleneckFitness;
 
     public Chromosome(int length, float mutationRate, bool initialize = true)
     {
@@ -188,9 +188,9 @@ public class Chromosome
         #endregion
 
         malus = 0;
-        for (int i = 0; i < rooms.Length; i++)        
-            malus += Mathf.Max(Mathf.Abs(rooms[i].quads.Count - mean) - diff, 0);            
-        
+        for (int i = 0; i < rooms.Length; i++)
+            malus += Mathf.Max(Mathf.Abs(rooms[i].quads.Count - mean) - diff, 0);
+
         malus /= rooms.Length;
 
         sizeFitness = 1 / (malus + 1);
@@ -269,9 +269,38 @@ public class Chromosome
 
         fitData.HeightWidthPoints = malus;
 
-        #endregion       
+        #endregion
+
+        #region bottleneck
+
+        bool up;
+        bool down;
+        bool left;
+        bool right;
+        malus = 0;
+
+        foreach (Room r in rooms)
+        {
+            foreach (Quad q in r.quads)
+            {
+                up = q.up != null;
+                down = q.down != null;
+                left = q.left != null;
+                right = q.right != null;
+
+                if(((up || down) && (!left && !right)) || ((left || right) && (!up && !down)))                
+                    malus += 1;
+                
+            }
+        }
+
+        bottleneckFitness = 1 / (malus + 1);
+
+
+        #endregion
 
         g.roomsFitness = roomsFitness;
+        g.bottleneckFitness = bottleneckFitness;
         g.sizeFitness = sizeFitness;
         g.distanceFitness = distanceFitness;
         g.hwFitness = hwFitness;
@@ -282,7 +311,7 @@ public class Chromosome
         g.cols = cols;
         g.ratio = ratio;
 
-        fitness = (roomsFitness + sizeFitness + distanceFitness + connectionFitness + hwFitness) / 5;
+        fitness = (roomsFitness + sizeFitness + distanceFitness + connectionFitness + hwFitness + bottleneckFitness) / 6;
 
         #region Shape Variance TODO
 

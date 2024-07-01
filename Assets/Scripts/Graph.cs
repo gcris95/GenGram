@@ -17,6 +17,7 @@ public class Graph
     public int minX, minY, maxX, maxY;
 
     public float roomsFitness;
+    public float bottleneckFitness;
     public float distanceFitness;
     public float sizeFitness;
     public float hwFitness;

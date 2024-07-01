@@ -52,13 +52,13 @@ public class Generator : MonoBehaviour
             if (testing || bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
                 break;
 
-            if (bestGraph.chromosome.fitness < 0.7 && cont > 20)
+            if (bestGraph.chromosome.fitness < 0.6 && cont > 40)
             {
                 maps.reinitialize();
                 cont = 0;
             }
-            //else            
-            maps.newGeneration();
+            else
+                maps.newGeneration();
 
 
             yield return null;
@@ -86,6 +86,7 @@ public class Generator : MonoBehaviour
         Debug.Log("Punteggio size: " + bestGraph.sizeFitness);
         Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
         Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
+        Debug.Log("Punteggio bottleneck: " + bestGraph.bottleneckFitness);
         //Debug.Log("minX: " + bestGraph.minX);
         //Debug.Log("maxX: " + bestGraph.maxX);
         //Debug.Log("minY: " + bestGraph.minY);
