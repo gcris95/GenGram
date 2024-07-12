@@ -13,12 +13,64 @@ public class Generator : MonoBehaviour
     Population maps;
     TileSetting ts;
 
+
+
+    bool started;
+    float time;
+    int cont = 0;
+    int chromosomeLength;
+    FitnessData fitnessData = new FitnessData();
+    MapData mapData = new MapData();
+
     // Start is called before the first frame update
     void Start()
     {
         checkSettings();
         ts = GetComponent<TileSetting>();
-        StartCoroutine(generation());
+        //StartCoroutine(generation());
+
+        time = Time.time;
+        chromosomeLength = 4 + settings.rulesNumber * 6;
+        maps = new Population(settings, chromosomeLength);
+        started = true;
+    }
+
+    private void Update()
+    {
+        if (!started)
+            return;
+
+        cont++;
+        bestGraph = null;
+
+        for (int i = 0; i < maps.population.Length; i++)
+        {
+            g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+
+            g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+
+            if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
+                bestGraph = g;
+        }
+
+        Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
+
+        if (bestGraph.chromosome.fitness < 1 - settings.fitnessThreshold && maps.generations < settings.maxGenerations)
+        {
+            if (bestGraph.chromosome.fitness < 0.6 && cont > 40)
+            {
+                maps.reinitialize();
+                cont = 0;
+            }
+            else
+                maps.newGeneration();
+        }
+        else
+        {
+            createRooms();
+            StartCoroutine(createCorridors());
+            started = false;
+        }
     }
 
     private IEnumerator generation()

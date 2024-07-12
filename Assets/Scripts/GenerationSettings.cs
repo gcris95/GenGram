@@ -31,6 +31,14 @@ public class GenerationSettings : ScriptableObject
     [Space(20)]
 
     [Header("Map Settings")]
+
+    public bool checkRoomsCount = true;
+    public bool checkRoomsSize = true;
+    public bool checkDistance = true;
+    public bool checkGridCover = true;
+    public bool checkHeightRatio = true;
+    public bool checkBottlenecks = true;
+
     [Header("Rooms Number")]
     [MinMaxSlider(2, 100)]
     public Vector2Int roomsNumber = new Vector2Int(7, 15);

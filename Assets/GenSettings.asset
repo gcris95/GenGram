@@ -14,15 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fitnessThreshold: 0.1
   rulesNumber: 264
-  populationSize: 50
+  populationSize: 70
   tournamentSize: 20
   mutationRate: 1
   elitism: 0
-  maxGenerations: 500
+  maxGenerations: 1000
   quadSize: 4
+  checkRoomsCount: 1
+  checkRoomsSize: 1
+  checkDistance: 1
+  checkGridCover: 1
+  checkHeightRatio: 1
+  checkBottlenecks: 1
   roomsNumber: {x: 19, y: 25}
   quadPerRoom: {x: 9, y: 15}
   firstLastDistance: {x: 6, y: 6}
   minMaxCover: 1
   coverPercentage: 75
-  hwRatio: 0.25
+  hwRatio: 1

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using Random = UnityEngine.Random;
 
 public class Population
 {
@@ -34,16 +35,8 @@ public class Population
 
     public void reinitialize()
     {
-        for (int i = 0; i < population.Length; i++)        
-            population[i] = new Chromosome(population[i].genes.Length, population[i].mutationRate);        
-    }
-
-    public void partialReinitialize()
-    {
-        orderPopulation();
-
-        for (int i = population.Length / 2; i < population.Length; i++)       
-            population[i] = new Chromosome(population[i].genes.Length, population[i].mutationRate);        
+        for (int i = 0; i < population.Length; i++)
+            population[i].randomGenes();        
     }
 
     private void selection()
@@ -86,12 +79,14 @@ public class Population
             population[i] = children[0];
             population[i + 1] = children[1];
             i += 2;
-        }
+        }        
 
     }
 
     public void mutation()
     {
+        if (population[0].mutationRate == 0)
+            return;
         for (int i = 0; i < population.Length; i++)
             population[i].mutate();
     }

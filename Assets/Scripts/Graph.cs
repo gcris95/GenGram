@@ -29,13 +29,13 @@ public class Graph
     public float ratio;
     public float malus;    
 
-    public Graph(Room[] roomList, Chromosome c, float shiftAmount, int minX, int maxX, int minY, int maxY)
+    public Graph(Room[] roomList, int roomsCount, Chromosome c, float shiftAmount, int minX, int maxX, int minY, int maxY)
     {
         this.shiftAmount = shiftAmount;
-        rooms = new Room[roomList.Length];
-        matrix = new bool[roomList.Length][];
-        mst = new bool[roomList.Length][];
-        distances = new int[roomList.Length];
+        rooms = new Room[roomsCount];
+        matrix = new bool[roomsCount][];
+        mst = new bool[roomsCount][];
+        distances = new int[roomsCount];
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
@@ -43,14 +43,12 @@ public class Graph
 
         chromosome = c;
 
-        for (int i = 0; i < roomList.Length; i++)
+        for (int i = 0; i < roomsCount; i++)
+        {
             rooms[roomList[i].id] = roomList[i];
-
-        for (int i = 0; i < roomList.Length; i++)
-            matrix[i] = new bool[roomList.Length];
-
-        for (int i = 0; i < roomList.Length; i++)
-            mst[i] = new bool[roomList.Length];
+            matrix[i] = new bool[roomsCount];
+            mst[i] = new bool[roomsCount];
+        }
 
         mstPrim();
         addExtraEdges();
