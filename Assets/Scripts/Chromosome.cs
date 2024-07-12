@@ -194,7 +194,7 @@ public class Chromosome
 
             malus = 0;
             for (int i = 0; i < rooms.Length; i++)
-                malus += Mathf.Max(Mathf.Abs(rooms[i].quads.Count - mean) - diff, 0);
+                malus += Mathf.Max(Mathf.Abs(rooms[i].quadsCount - mean) - diff, 0);
 
             malus /= rooms.Length;
 
@@ -304,12 +304,12 @@ public class Chromosome
 
             foreach (Room r in rooms)
             {
-                foreach (Quad q in r.quads)
+                for (int i = 0; i < r.quadsCount; i++)
                 {
-                    up = q.up != null;
-                    down = q.down != null;
-                    left = q.left != null;
-                    right = q.right != null;
+                    up = r.quads[i].up != null;
+                    down = r.quads[i].down != null;
+                    left = r.quads[i].left != null;
+                    right = r.quads[i].right != null;
 
                     if (((up || down) && (!left && !right)) || ((left || right) && (!up && !down)))
                         malus += 1;

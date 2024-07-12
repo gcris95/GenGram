@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -10,7 +11,9 @@ public class Room
     public int id;
 
     // Quads of the room
-    public List<Quad> quads = new List<Quad>(1);
+    //public List<Quad> quads = new List<Quad>(1);
+    public Quad[] quads = new Quad[10];
+    public int quadsCount = 0;
     public int quadIndex = 0;
     public Quad center;
 
@@ -49,12 +52,14 @@ public class Room
         hasDown = neighbours[2];
         hasLeft = neighbours[3];
 
-        quads.Add(new Quad(0, 0, quadSize));
+        //quads.Add(new Quad(0, 0, quadSize));
+        quads[0] = new Quad(0, 0, quadSize);
+        quadsCount++;
     }
 
     public void shiftIndexUp()
     {
-        quadIndex = Mathf.Min(quadIndex + 1, quads.Count - 1);
+        quadIndex = Mathf.Min(quadIndex + 1, quadsCount - 1);
     }
 
     public void shiftIndexDown()
@@ -64,7 +69,7 @@ public class Room
 
     public void resetIndex()
     {
-        quadIndex = quads.Count - 1;
+        quadIndex = quadsCount - 1;
     }
 
     public Room addUpNeighbour(Room newR)
@@ -210,7 +215,7 @@ public class Room
     {
         calcArea();
 
-        if (quads.Count == 1)
+        if (quadsCount == 1)
         {
             float quadSize = quads[0].size;
             height = quadSize;
@@ -218,7 +223,7 @@ public class Room
         }
         else
         {
-            for (int i = 0; i < quads.Count; i++)
+            for (int i = 0; i < quadsCount; i++)
             {
                 minY = Mathf.Min(minY, quads[i].y);
                 maxY = Mathf.Max(maxY, quads[i].y);
@@ -234,7 +239,7 @@ public class Room
 
     public void setTiles()
     {
-        if (quads.Count == 1)
+        if (quadsCount == 1)
         {
             quads[0].tileType = TileType.soloTile;
             return;
@@ -250,169 +255,169 @@ public class Room
         bool downLeftNeighbour;
         bool downRightNeighbour;
 
-        foreach (Quad q in quads)
+        for(int i = 0; i < quadsCount; i++)
         {
-            upNeighbour = q.up != null;
-            downNeighbour = q.down != null;
-            leftNeighbour = q.left != null;
-            rightNeighbour = q.right != null;
+            upNeighbour = quads[i].up != null;
+            downNeighbour = quads[i].down != null;
+            leftNeighbour = quads[i].left != null;
+            rightNeighbour = quads[i].right != null;
 
             if (upNeighbour && downNeighbour && leftNeighbour && rightNeighbour)
             {
-                upLeftNeighbour = q.up.left != null;
-                upRightNeighbour = q.up.right != null;
-                downLeftNeighbour = q.down.left != null;
-                downRightNeighbour = q.down.right != null;
+                upLeftNeighbour = quads[i].up.left != null;
+                upRightNeighbour = quads[i].up.right != null;
+                downLeftNeighbour = quads[i].down.left != null;
+                downRightNeighbour = quads[i].down.right != null;
 
                 if (upLeftNeighbour && upRightNeighbour && downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.floorTile;
+                    quads[i].tileType = TileType.floorTile;
                 else if (!upLeftNeighbour && upRightNeighbour && downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exTopSxangleTile;
+                    quads[i].tileType = TileType.exTopSxangleTile;
                 else if (upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exTopDxangleTile;
+                    quads[i].tileType = TileType.exTopDxangleTile;
                 else if (upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exBotSxangleTile;
+                    quads[i].tileType = TileType.exBotSxangleTile;
                 else if (upLeftNeighbour && upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exBotDxangleTile;
+                    quads[i].tileType = TileType.exBotDxangleTile;
                 else if (!upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exDoubleTopAngleTile;
+                    quads[i].tileType = TileType.exDoubleTopAngleTile;
                 else if (!upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exDoubleLeftAngleTile;
+                    quads[i].tileType = TileType.exDoubleLeftAngleTile;
                 else if (upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exDoubleRightAngleTile;
+                    quads[i].tileType = TileType.exDoubleRightAngleTile;
                 else if (upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exDoubleBotAngleTile;
+                    quads[i].tileType = TileType.exDoubleBotAngleTile;
                 else if (!upLeftNeighbour && upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exDoubleTopRightAngleTile;
+                    quads[i].tileType = TileType.exDoubleTopRightAngleTile;
                 else if (upLeftNeighbour && !upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exDoubleBotRightAngleTile;
+                    quads[i].tileType = TileType.exDoubleBotRightAngleTile;
                 else if (!upLeftNeighbour && !upRightNeighbour && !downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.exTripleTopSxAngleTile;
+                    quads[i].tileType = TileType.exTripleTopSxAngleTile;
                 else if (!upLeftNeighbour && !upRightNeighbour && downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exTripleTopDxAngleTile;
+                    quads[i].tileType = TileType.exTripleTopDxAngleTile;
                 else if (upLeftNeighbour && !upRightNeighbour && !downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exTripleBopDxAngleTile;
+                    quads[i].tileType = TileType.exTripleBopDxAngleTile;
                 else if (!upLeftNeighbour && upRightNeighbour && !downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.exTripleBotSxAngleTile;
+                    quads[i].tileType = TileType.exTripleBotSxAngleTile;
                 else
-                    q.tileType = TileType.exAllAngleTile;
+                    quads[i].tileType = TileType.exAllAngleTile;
 
             }
             else if (!upNeighbour && downNeighbour && leftNeighbour && rightNeighbour)
             {
-                downLeftNeighbour = q.down.left != null;
-                downRightNeighbour = q.down.right != null;
+                downLeftNeighbour = quads[i].down.left != null;
+                downRightNeighbour = quads[i].down.right != null;
 
                 if (downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.topBorderTile;
+                    quads[i].tileType = TileType.topBorderTile;
                 else if (!downLeftNeighbour && downRightNeighbour)
-                    q.tileType = TileType.topBorderLeftAngleTile;
+                    quads[i].tileType = TileType.topBorderLeftAngleTile;
                 else if (downLeftNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.topBorderRightAngleTile;
+                    quads[i].tileType = TileType.topBorderRightAngleTile;
                 else
-                    q.tileType = TileType.topBorderBotAnglesTile;
+                    quads[i].tileType = TileType.topBorderBotAnglesTile;
             }
             else if (upNeighbour && downNeighbour && leftNeighbour && !rightNeighbour)
             {
-                upLeftNeighbour = q.left.up != null;
-                downLeftNeighbour = q.left.down != null;
+                upLeftNeighbour = quads[i].left.up != null;
+                downLeftNeighbour = quads[i].left.down != null;
 
                 if (upLeftNeighbour && downLeftNeighbour)
-                    q.tileType = TileType.dxBorderTile;
+                    quads[i].tileType = TileType.dxBorderTile;
                 else if (!upLeftNeighbour && downLeftNeighbour)
-                    q.tileType = TileType.rightBorderTopAngleTile;
+                    quads[i].tileType = TileType.rightBorderTopAngleTile;
                 else if (upLeftNeighbour && !downLeftNeighbour)
-                    q.tileType = TileType.rightBorderBotAngleTile;
+                    quads[i].tileType = TileType.rightBorderBotAngleTile;
                 else
-                    q.tileType = TileType.rightBorderLeftAnglesTile;
+                    quads[i].tileType = TileType.rightBorderLeftAnglesTile;
             }
             else if (upNeighbour && !downNeighbour && leftNeighbour && rightNeighbour)
             {
-                upLeftNeighbour = q.up.left != null;
-                upRightNeighbour = q.up.right != null;
+                upLeftNeighbour = quads[i].up.left != null;
+                upRightNeighbour = quads[i].up.right != null;
 
                 if (upLeftNeighbour && upRightNeighbour)
-                    q.tileType = TileType.botBorderTile;
+                    quads[i].tileType = TileType.botBorderTile;
                 else if (!upLeftNeighbour && upRightNeighbour)
-                    q.tileType = TileType.botBorderLeftAngleTile;
+                    quads[i].tileType = TileType.botBorderLeftAngleTile;
                 else if (upLeftNeighbour && !upRightNeighbour)
-                    q.tileType = TileType.botBorderRightAngleTile;
+                    quads[i].tileType = TileType.botBorderRightAngleTile;
                 else
-                    q.tileType = TileType.botBorderTopAnglesTile;
+                    quads[i].tileType = TileType.botBorderTopAnglesTile;
             }
             else if (upNeighbour && downNeighbour && !leftNeighbour && rightNeighbour)
             {
-                upRightNeighbour = q.right.up != null;
-                downRightNeighbour = q.right.down != null;
+                upRightNeighbour = quads[i].right.up != null;
+                downRightNeighbour = quads[i].right.down != null;
 
                 if (upRightNeighbour && downRightNeighbour)
-                    q.tileType = TileType.sxBorderTile;
+                    quads[i].tileType = TileType.sxBorderTile;
                 else if (!upRightNeighbour && downRightNeighbour)
-                    q.tileType = TileType.leftBorderTopAngleTile;
+                    quads[i].tileType = TileType.leftBorderTopAngleTile;
                 else if (upRightNeighbour && !downRightNeighbour)
-                    q.tileType = TileType.leftBorderBotAngleTile;
+                    quads[i].tileType = TileType.leftBorderBotAngleTile;
                 else
-                    q.tileType = TileType.leftBorderRightAnglesTile;
+                    quads[i].tileType = TileType.leftBorderRightAnglesTile;
             }
             else if (!upNeighbour && !downNeighbour && leftNeighbour && rightNeighbour)
             {
-                q.tileType = TileType.topbotborder;
+                quads[i].tileType = TileType.topbotborder;
             }
             else if (upNeighbour && downNeighbour && !leftNeighbour && !rightNeighbour)
             {
-                q.tileType = TileType.leftrightborder;
+                quads[i].tileType = TileType.leftrightborder;
             }
             else if (!upNeighbour && downNeighbour && !leftNeighbour && rightNeighbour)
             {
-                downRightNeighbour = q.right.down != null;
+                downRightNeighbour = quads[i].right.down != null;
 
                 if (downRightNeighbour)
-                    q.tileType = TileType.topSxangleTile;
+                    quads[i].tileType = TileType.topSxangleTile;
                 else
-                    q.tileType = TileType.topSxangleAndAngleTile;
+                    quads[i].tileType = TileType.topSxangleAndAngleTile;
             }
             else if (!upNeighbour && downNeighbour && leftNeighbour && !rightNeighbour)
             {
-                downLeftNeighbour = q.left.down != null;
+                downLeftNeighbour = quads[i].left.down != null;
 
                 if (downLeftNeighbour)
-                    q.tileType = TileType.topDxangleTile;
+                    quads[i].tileType = TileType.topDxangleTile;
                 else
-                    q.tileType = TileType.topDxangleAndAngleTile;
+                    quads[i].tileType = TileType.topDxangleAndAngleTile;
             }
             else if (upNeighbour && !downNeighbour && !leftNeighbour && rightNeighbour)
             {
-                upRightNeighbour = q.right.up != null;
+                upRightNeighbour = quads[i].right.up != null;
 
                 if (upRightNeighbour)
-                    q.tileType = TileType.botSxangleTile;
+                    quads[i].tileType = TileType.botSxangleTile;
                 else
-                    q.tileType = TileType.botSxangleAndAngleTile;
+                    quads[i].tileType = TileType.botSxangleAndAngleTile;
             }
             else if (upNeighbour && !downNeighbour && leftNeighbour && !rightNeighbour)
             {
-                upLeftNeighbour = q.left.up != null;
+                upLeftNeighbour = quads[i].left.up != null;
 
                 if (upLeftNeighbour)
-                    q.tileType = TileType.botDxangleTile;
+                    quads[i].tileType = TileType.botDxangleTile;
                 else
-                    q.tileType = TileType.botDxangleAndAngleTile;
+                    quads[i].tileType = TileType.botDxangleAndAngleTile;
             }
             else if (!upNeighbour && !downNeighbour && !leftNeighbour && rightNeighbour)
             {
-                q.tileType = TileType.uRightTile;
+                quads[i].tileType = TileType.uRightTile;
             }
             else if (upNeighbour && !downNeighbour && !leftNeighbour && !rightNeighbour)
             {
-                q.tileType = TileType.uUpTile;
+                quads[i].tileType = TileType.uUpTile;
             }
             else if (!upNeighbour && downNeighbour && !leftNeighbour && !rightNeighbour)
             {
-                q.tileType = TileType.uBotTile;
+                quads[i].tileType = TileType.uBotTile;
             }
             else if (!upNeighbour && !downNeighbour && leftNeighbour && !rightNeighbour)
             {
-                q.tileType = TileType.uLeftTile;
+                quads[i].tileType = TileType.uLeftTile;
             }
         }
     }
@@ -421,7 +426,7 @@ public class Room
 
     public void calcArea()
     {
-        area = quads.Count * quads[0].size * quads[0].size;
+        area = quadsCount * quads[0].size * quads[0].size;
     }
 
     public void shiftRoom(float shiftAmount)
@@ -444,7 +449,7 @@ public class Room
             newQ = new Quad(parent.x, parent.y + 1, parent.size);
             last = parent.addUpNeighbour(newQ);
 
-            for (int i = 0; i < quads.Count; i++)
+            for (int i = 0; i < quadsCount; i++)
             {
                 if (quads[i].y == last.y)
                 {
@@ -471,7 +476,7 @@ public class Room
             newQ = new Quad(parent.x + 1, parent.y, parent.size);
             last = parent.addRightNeighbour(newQ);
 
-            for (int i = 0; i < quads.Count; i++)
+            for (int i = 0; i < quadsCount; i++)
             {
                 if (quads[i].x == last.x)
                 {
@@ -499,7 +504,7 @@ public class Room
             newQ = new Quad(parent.x, parent.y - 1, parent.size);
             last = parent.addDownNeighbour(newQ);
 
-            for (int i = 0; i < quads.Count; i++)
+            for (int i = 0; i < quadsCount; i++)
             {
                 if (quads[i].y == last.y)
                 {
@@ -526,7 +531,7 @@ public class Room
             newQ = new Quad(parent.x - 1, parent.y, parent.size);
             last = parent.addLeftNeighbour(newQ);
 
-            for (int i = 0; i < quads.Count; i++)
+            for (int i = 0; i < quadsCount; i++)
             {
                 if (quads[i].x == last.x)
                 {
@@ -550,7 +555,50 @@ public class Room
 
         }
 
-        quads.Insert(quadIndex, newQ);
+        //quads.Insert(quadIndex, newQ);
+
+
+        if (quadsCount < quads.Length)
+        {
+            if (quadIndex < quadsCount)
+            {
+                Quad prev = quads[quadIndex];
+                Quad curr;
+
+                for (int i = quadIndex + 1; i <= quadsCount; i++)
+                {
+                    curr = quads[i];
+                    quads[i] = prev;
+                    prev = curr;
+                }
+                quads[quadIndex] = newQ;
+
+            }
+            else
+            {
+                quads[quadIndex] = newQ;
+            }
+        }
+        else
+        {
+            Quad[] newList = new Quad[quadsCount * 2];
+
+            for (int i = 0; i <= quadsCount; i++)
+            {
+                if (i < quadIndex)
+                    newList[i] = quads[i];
+                else if (i > quadIndex)
+                    newList[i] = quads[i - 1];
+                else
+                    newList[i] = newQ;
+            }
+
+            quads = newList;
+        }
+
+        quadsCount++;
+
+
     }
 
     public void shift(Vector2 shiftAmount)
@@ -582,11 +630,11 @@ public class Room
 
         setTiles();
 
-        foreach (Quad q in quads)
+        for(int i = 0; i < quadsCount; i++)
         {
-            q.shift(position);
-            ts.setTiles(q.pivot, q.tileType);
-            q.show(room);
+            quads[i].shift(position);
+            ts.setTiles(quads[i].pivot, quads[i].tileType);
+            quads[i].show(room);
         }
     }
 
@@ -594,7 +642,7 @@ public class Room
     {
         Quad obj = null;
 
-        for (int i = 0; i < quads.Count; i++)
+        for (int i = 0; i < quadsCount; i++)
         {
             if (quads[i].x == x)
             {
@@ -616,7 +664,7 @@ public class Room
     {
         Quad obj = null;
 
-        for (int i = 0; i < quads.Count; i++)
+        for (int i = 0; i < quadsCount; i++)
         {
             if (quads[i].y == y)
             {
