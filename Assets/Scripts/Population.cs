@@ -72,15 +72,29 @@ public class Population
     public void crossover()
     {
         int i = 0;
-        Chromosome[] children = new Chromosome[2];
+        //Chromosome[] children = new Chromosome[2];
+        //while (i < population.Length)
+        //{
+        //    children = matingPool[i].crossover(matingPool[i + 1]);
+        //    population[i] = children[0];
+        //    population[i + 1] = children[1];
+        //    i += 2;
+        //}
+
+        int point;
+
         while (i < population.Length)
         {
-            children = matingPool[i].crossover(matingPool[i + 1]);
-            population[i] = children[0];
-            population[i + 1] = children[1];
-            i += 2;
-        }        
+            point = Random.Range(1, population[0].genes.Length - 1);
 
+            for (int j = 0; j < population[0].genes.Length; j++)
+            {
+                population[i].genes[j] = j < point ? matingPool[i].genes[j] : matingPool[i + 1].genes[j];
+                population[i + 1].genes[j] = j < point ? matingPool[i + 1].genes[j] : matingPool[i].genes[j];
+            }
+
+            i += 2;
+        }
     }
 
     public void mutation()

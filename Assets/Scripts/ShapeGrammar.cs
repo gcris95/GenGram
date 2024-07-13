@@ -11,14 +11,14 @@ public class ShapeGrammar
     private static int index = 0;
     private static int id = 1;
     private static int quadSize;
-
+    private static int[] genes;
     private static int minX = 0, maxX = 0, minY = 0, maxY = 0;
 
     public static Graph generate(Chromosome c, int qs)
     {
         quadSize = qs;
 
-        int[] genes = c.genes;
+        genes = c.genes;
         list[0] = new Room(0, 0, 0, quadSize, new bool[] { genes[0] == 1, genes[1] == 1, genes[2] == 1, genes[3] == 1 });
         roomsCount++;
 
@@ -61,7 +61,7 @@ public class ShapeGrammar
         Graph g = new Graph(list, roomsCount, c, shiftamount + 1, minX, maxX, minY, maxY);
 
         id = 1;
-        list = new Room[20];
+        //list = new Room[20];
         roomsCount = 0;
         index = 0;
 
