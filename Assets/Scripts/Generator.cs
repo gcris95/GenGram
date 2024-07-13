@@ -27,12 +27,12 @@ public class Generator : MonoBehaviour
     {
         checkSettings();
         ts = GetComponent<TileSetting>();
-        //StartCoroutine(generation());
+        StartCoroutine(generation());
 
         time = Time.time;
         chromosomeLength = 4 + settings.rulesNumber * 6;
         maps = new Population(settings, chromosomeLength);
-        started = true;
+        //started = true;
     }
 
     private void Update()
@@ -57,7 +57,7 @@ public class Generator : MonoBehaviour
 
         if (bestGraph.chromosome.fitness < 1 - settings.fitnessThreshold && maps.generations < settings.maxGenerations)
         {
-            if (bestGraph.chromosome.fitness < 0.6 && cont > 40)
+            if (bestGraph.chromosome.fitness < 0.6 && cont > 15)
             {
                 maps.reinitialize();
                 cont = 0;
@@ -101,7 +101,7 @@ public class Generator : MonoBehaviour
 
             Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
 
-            if (testing || bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
+            if (bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
                 break;
 
             if (bestGraph.chromosome.fitness < 0.6 && cont > 40)
