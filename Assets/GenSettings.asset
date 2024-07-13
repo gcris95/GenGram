@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2814a924cf73c744af3528a0ad5030f, type: 3}
   m_Name: GenSettings
   m_EditorClassIdentifier: 
-  fitnessThreshold: 0.1
+  fitnessThreshold: 0.15
   rulesNumber: 264
-  populationSize: 70
-  tournamentSize: 20
+  populationSize: 100
+  tournamentSize: 40
   mutationRate: 1
   elitism: 0
   maxGenerations: 1000

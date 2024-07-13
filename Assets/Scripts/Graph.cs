@@ -53,7 +53,6 @@ public class Graph
         mstPrim();
         addExtraEdges();
         calcDistances();
-
     }
 
     /// <summary>

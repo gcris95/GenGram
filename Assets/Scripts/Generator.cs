@@ -104,7 +104,7 @@ public class Generator : MonoBehaviour
             if (bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
                 break;
 
-            if (bestGraph.chromosome.fitness < 0.6 && cont > 40)
+            if (bestGraph.chromosome.fitness < 0.6 && cont > 15)
             {
                 maps.reinitialize();
                 cont = 0;
