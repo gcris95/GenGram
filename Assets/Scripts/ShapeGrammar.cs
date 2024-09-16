@@ -275,7 +275,6 @@ public class ShapeGrammar
     {
         index = Mathf.Min(roomsCount - 1, index + 1);
 
-
         for (int i = 0; i < roomsCount; i++)
             list[i].shiftIndexDown();
     }

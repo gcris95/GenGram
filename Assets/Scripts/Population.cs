@@ -105,33 +105,33 @@ public class Population
             population[i].mutate();
     }
 
-    public void orderPopulation()
-    {
-        Array.Sort(population, delegate (Chromosome x, Chromosome y) { return x.fitness.CompareTo(y.fitness); });
+    //public void orderPopulation()
+    //{
+    //    Array.Sort(population, delegate (Chromosome x, Chromosome y) { return x.fitness.CompareTo(y.fitness); });
 
-        //for (int i = 0; i < population.Length; ++i)
-        //    Debug.Log("Cromosomi dopo ordinamento: " + string.Join(", ", population[i].fitness));
+    //    //for (int i = 0; i < population.Length; ++i)
+    //    //    Debug.Log("Cromosomi dopo ordinamento: " + string.Join(", ", population[i].fitness));
 
-    }
+    //}
 
-    public void paretoFitness()
-    {
-        float value;
+    //public void paretoFitness()
+    //{
+    //    float value;
 
-        for (int i = 0; i < population.Length; i++)
-        {
-            population[i].paretoFitness = float.MinValue;
-            for (int j = 0; j < population.Length; j++)
-            {
-                if (i != j)
-                {
-                    value = Mathf.Min(population[i].connectionFitness - population[j].connectionFitness, population[i].distanceFitness - population[j].distanceFitness, population[i].sizeFitness - population[j].sizeFitness, population[i].hwFitness - population[j].hwFitness, population[i].roomsFitness - population[j].roomsFitness);
+    //    for (int i = 0; i < population.Length; i++)
+    //    {
+    //        population[i].paretoFitness = float.MinValue;
+    //        for (int j = 0; j < population.Length; j++)
+    //        {
+    //            if (i != j)
+    //            {
+    //                value = Mathf.Min(population[i].connectionFitness - population[j].connectionFitness, population[i].distanceFitness - population[j].distanceFitness, population[i].sizeFitness - population[j].sizeFitness, population[i].hwFitness - population[j].hwFitness, population[i].roomsFitness - population[j].roomsFitness);
 
-                    if (value > population[i].paretoFitness)
-                        population[i].paretoFitness = value;
-                }
-            }
-            population[i].paretoFitness *= -1;
-        }
-    }
+    //                if (value > population[i].paretoFitness)
+    //                    population[i].paretoFitness = value;
+    //            }
+    //        }
+    //        population[i].paretoFitness *= -1;
+    //    }
+    //}
 }

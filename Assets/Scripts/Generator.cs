@@ -13,14 +13,12 @@ public class Generator : MonoBehaviour
     Population maps;
     TileSetting ts;
 
-
-
     bool started;
     float time;
     int cont = 0;
     int chromosomeLength;
-    FitnessData fitnessData = new FitnessData();
-    MapData mapData = new MapData();
+    //FitnessData fitnessData = new FitnessData();
+    //MapData mapData = new MapData();
 
     // Start is called before the first frame update
     void Start()
@@ -45,9 +43,9 @@ public class Generator : MonoBehaviour
 
         for (int i = 0; i < maps.population.Length; i++)
         {
-            g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+            /*g=*/ShapeGrammar.generate(maps.population[i], settings.quadSize);
 
-            g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+            //g.chromosome.calcFitness(g, settings, fitnessData, mapData);
 
             if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
                 bestGraph = g;
@@ -80,24 +78,33 @@ public class Generator : MonoBehaviour
         int chromosomeLength = 4 + settings.rulesNumber * 6;
         maps = new Population(settings, chromosomeLength);
 
-        FitnessData fitnessData = new FitnessData();
-        MapData mapData = new MapData();
+        List<float> bestFitCurve = new List<float>();
+        List<float> avgFitCurve = new List<float>();
+
+        float avgFitness;
 
         do
         {
             cont++;
 
             bestGraph = null;
+            avgFitness = 0;
 
             for (int i = 0; i < maps.population.Length; i++)
             {
                 g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
 
-                g.chromosome.calcFitness(g, settings, fitnessData, mapData);
+                g.chromosome.calcFitness(g, settings);
+                avgFitness += g.chromosome.fitness;
 
                 if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
                     bestGraph = g;
             }
+
+            avgFitness /= maps.population.Length;
+
+            bestFitCurve.Add(bestGraph.chromosome.fitness);
+            avgFitCurve.Add(avgFitness);
 
             Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
 
@@ -117,40 +124,66 @@ public class Generator : MonoBehaviour
         }
         while (maps.generations < settings.maxGenerations);
 
-        //Debug.Log("--------------MATRIX--------------");
-        //for (int i = 0; i < bestGraph.rooms.Length; i++)
-        //    Debug.Log(string.Join(", ", bestGraph.matrix[i]));
-
-        //Debug.Log("Best last: " + bestGraph.lastRoomId);
-        //Debug.Log("Best lastconnection: " + bestGraph.getConnections(bestGraph.lastRoomId).Count);
-
-
-
         time = Time.time - time;
-
 
         createRooms();
         StartCoroutine(createCorridors());
 
-        Debug.Log("GENERAZIONI: " + maps.generations);
-        Debug.Log("Punteggio rooms: " + bestGraph.roomsFitness);
-        Debug.Log("Punteggio distance: " + bestGraph.distanceFitness);
-        Debug.Log("Punteggio size: " + bestGraph.sizeFitness);
-        Debug.Log("Punteggio HW: " + bestGraph.hwFitness);
-        Debug.Log("Punteggio connection: " + bestGraph.connectionFitness);
-        Debug.Log("Punteggio bottleneck: " + bestGraph.bottleneckFitness);
-        //Debug.Log("minX: " + bestGraph.minX);
-        //Debug.Log("maxX: " + bestGraph.maxX);
-        //Debug.Log("minY: " + bestGraph.minY);
-        //Debug.Log("maxY: " + bestGraph.maxY);
-        //Debug.Log("ROW: " + bestGraph.rows);
-        //Debug.Log("COLS: " + bestGraph.cols);
-        //Debug.Log("ROOM PER ROW: " + bestGraph.roomPerRow);
-        //Debug.Log("ROOM PER COL: " + bestGraph.roomPerCol);
-        //Debug.Log("RATIO: " + bestGraph.ratio);
-        //Debug.Log("malus connection: " + bestGraph.malus);
+        DataLogger.log(settings, calcMapData(), calcFitnessData(), bestGraph.chromosome.mutations, time, maps.generations, bestFitCurve, avgFitCurve);
+    }
 
-        DataLogger.log(settings, bestGraph, time, maps.generations);
+    public FitnessData calcFitnessData()
+    {
+        FitnessData fitnessData = new FitnessData();
+
+        fitnessData.fitness = bestGraph.chromosome.fitness;
+        fitnessData.distanceFitness = bestGraph.chromosome.distanceFitness;
+        fitnessData.sizeFitness = bestGraph.chromosome.sizeFitness;
+        fitnessData.countFitness = bestGraph.chromosome.roomsFitness;
+        fitnessData.bottleneckFitness = bestGraph.chromosome.bottleneckFitness;
+        fitnessData.distributionFitness = bestGraph.chromosome.connectionFitness;
+        fitnessData.ratioFitness = g.chromosome.hwFitness;
+
+        return fitnessData;
+    }
+
+    public MapData calcMapData()
+    {
+        MapData mapData = new MapData();
+
+        mapData.roomsCount = bestGraph.rooms.Length;
+        mapData.firstLastDistance = bestGraph.distances[bestGraph.lastRoomId];
+
+        foreach (Room room in bestGraph.rooms)
+        {
+            mapData.averageRatio += room.width / room.height;
+            mapData.averageArea += room.area;
+        }
+        mapData.averageRatio /= mapData.roomsCount;
+        mapData.averageArea /= mapData.roomsCount;
+
+        int rows = bestGraph.maxY + Mathf.Abs(bestGraph.minY) + 1;
+        int cols = bestGraph.maxX + Mathf.Abs(bestGraph.minX) + 1;
+        int graphArea = rows * cols;
+        mapData.distributionPercentage = graphArea / bestGraph.rooms.Length * 100;
+        mapData.bottlenecks = bestGraph.chromosome.checkBottlenecks(settings, bestGraph.rooms);
+
+        mapData.rooms = new List<RoomData>();
+        RoomData roomData;
+        foreach (Room room in bestGraph.rooms)
+        {
+            roomData = new RoomData();
+            roomData.id = room.id;
+            roomData.quadsNumber = room.quads.Length;
+            roomData.height = room.height;
+            roomData.width = room.width;
+            roomData.area = room.area;
+            roomData.x = room.x;
+            roomData.y = room.y;
+            mapData.rooms.Add(roomData);
+        }
+
+        return mapData;
     }
 
     public IEnumerator createCorridors()

@@ -11,17 +11,9 @@ public class Graph
     public Chromosome chromosome;
     public float shiftAmount;
 
-    public MapData mapData;
-    public FitnessData fitnessData;
     public int lastRoomId;
     public int minX, minY, maxX, maxY;
 
-    public float roomsFitness;
-    public float bottleneckFitness;
-    public float distanceFitness;
-    public float sizeFitness;
-    public float hwFitness;
-    public float connectionFitness;
     public float rows;
     public float cols;
     public float roomPerRow;
