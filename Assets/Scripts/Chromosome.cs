@@ -321,7 +321,7 @@ public class Chromosome
                 right = r.quads[i].right != null;
 
                 if (((up || down) && (!left && !right)) || ((left || right) && (!up && !down)))
-                    malus += 1;
+                    malus += 1.5f;
             }
         }
         bottleneckFitness = 1 / (malus + 1);

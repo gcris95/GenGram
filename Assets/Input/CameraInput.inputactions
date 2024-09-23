@@ -1,0 +1,34 @@
+{
+    "name": "CameraInput",
+    "maps": [
+        {
+            "name": "Movement",
+            "id": "fd93c43b-d6ca-4c1d-b3e9-a15823e10b55",
+            "actions": [
+                {
+                    "name": "Drag",
+                    "type": "Button",
+                    "id": "f5d207d2-f4a3-4068-bd32-7c5052f6eb10",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c4f85e38-d1f7-4418-b488-48cd5b0da66f",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

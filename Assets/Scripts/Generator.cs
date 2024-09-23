@@ -1,135 +1,95 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using Color = UnityEngine.Color;
+using UnityEngine.Tilemaps;
 
 public class Generator : MonoBehaviour
 {
+    public UIManager manager;
     public GenerationSettings settings;
     public bool testing;
+    public string filename;
+    public int mapsToGenerate;
+    public Graph bestGraph;
     Graph g;
-    Graph bestGraph;
     Population maps;
     TileSetting ts;
 
-    bool started;
-    float time;
-    int cont = 0;
-    int chromosomeLength;
-    //FitnessData fitnessData = new FitnessData();
-    //MapData mapData = new MapData();
-
-    // Start is called before the first frame update
     void Start()
     {
-        checkSettings();
         ts = GetComponent<TileSetting>();
-        StartCoroutine(generation());
-
-        time = Time.time;
-        chromosomeLength = 4 + settings.rulesNumber * 6;
-        maps = new Population(settings, chromosomeLength);
-        //started = true;
     }
 
-    private void Update()
+    public void generate()
     {
-        if (!started)
-            return;
-
-        cont++;
-        bestGraph = null;
-
-        for (int i = 0; i < maps.population.Length; i++)
-        {
-            /*g=*/ShapeGrammar.generate(maps.population[i], settings.quadSize);
-
-            //g.chromosome.calcFitness(g, settings, fitnessData, mapData);
-
-            if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
-                bestGraph = g;
-        }
-
-        Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
-
-        if (bestGraph.chromosome.fitness < 1 - settings.fitnessThreshold && maps.generations < settings.maxGenerations)
-        {
-            if (bestGraph.chromosome.fitness < 0.6 && cont > 15)
-            {
-                maps.reinitialize();
-                cont = 0;
-            }
-            else
-                maps.newGeneration();
-        }
-        else
-        {
-            createRooms();
-            StartCoroutine(createCorridors());
-            started = false;
-        }
+        resetTiles();
+        StartCoroutine(generation());
     }
 
     private IEnumerator generation()
     {
-        float time = Time.time;
-        int cont = 0;
-        int chromosomeLength = 4 + settings.rulesNumber * 6;
-        maps = new Population(settings, chromosomeLength);
-
-        List<float> bestFitCurve = new List<float>();
-        List<float> avgFitCurve = new List<float>();
-
-        float avgFitness;
-
-        do
+        for (int j = 0; j < mapsToGenerate; j++)
         {
-            cont++;
+            checkSettings();
+            float time = Time.time;
+            int cont = 0;
+            int chromosomeLength = 4 + settings.rulesNumber * 6;
+            maps = new Population(settings, chromosomeLength);
 
-            bestGraph = null;
-            avgFitness = 0;
+            List<float> bestFitCurve = new List<float>();
+            List<float> avgFitCurve = new List<float>();
 
-            for (int i = 0; i < maps.population.Length; i++)
+            float avgFitness;
+
+            do
             {
-                g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+                cont++;
 
-                g.chromosome.calcFitness(g, settings);
-                avgFitness += g.chromosome.fitness;
+                bestGraph = null;
+                avgFitness = 0;
 
-                if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
-                    bestGraph = g;
+                for (int i = 0; i < maps.population.Length; i++)
+                {
+                    g = ShapeGrammar.generate(maps.population[i], settings.quadSize);
+
+                    g.chromosome.calcFitness(g, settings);
+                    avgFitness += g.chromosome.fitness;
+
+                    if (bestGraph == null || g.chromosome.fitness > bestGraph.chromosome.fitness)
+                        bestGraph = g;
+                }
+
+                avgFitness /= maps.population.Length;
+
+                bestFitCurve.Add(bestGraph.chromosome.fitness);
+                avgFitCurve.Add(avgFitness);
+
+                Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
+
+                if (bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
+                    break;
+
+                if (bestGraph.chromosome.fitness < 0.6 && cont > 15)
+                {
+                    maps.reinitialize();
+                    cont = 0;
+                }
+                else
+                    maps.newGeneration();
+
+
+                yield return null;
             }
+            while (maps.generations < settings.maxGenerations);
 
-            avgFitness /= maps.population.Length;
+            time = Time.time - time;
 
-            bestFitCurve.Add(bestGraph.chromosome.fitness);
-            avgFitCurve.Add(avgFitness);
-
-            Debug.Log("Best Fitness: " + bestGraph.chromosome.fitness);
-
-            if (bestGraph.chromosome.fitness > 1 - settings.fitnessThreshold)
-                break;
-
-            if (bestGraph.chromosome.fitness < 0.6 && cont > 15)
-            {
-                maps.reinitialize();
-                cont = 0;
-            }
-            else
-                maps.newGeneration();
-
-
-            yield return null;
+            DataLogger.log(filename, settings, calcMapData(), calcFitnessData(), bestGraph.chromosome.mutations, time, maps.generations, bestFitCurve, avgFitCurve);
         }
-        while (maps.generations < settings.maxGenerations);
-
-        time = Time.time - time;
 
         createRooms();
         StartCoroutine(createCorridors());
-
-        DataLogger.log(settings, calcMapData(), calcFitnessData(), bestGraph.chromosome.mutations, time, maps.generations, bestFitCurve, avgFitCurve);
+        manager.finished();
     }
 
     public FitnessData calcFitnessData()
@@ -537,10 +497,6 @@ public class Generator : MonoBehaviour
                 }
             }
             totalShift += (shiftValue - min + 1) * rooms[0].quads[0].size + 1;
-            //Debug.Log("-----------------------");
-            //Debug.Log("current X " + currentRow);
-            //Debug.Log("SHIFTVALUE " + shiftValue);
-            //Debug.Log("TOTALSHIFT " + totalShift);
             min = 0;
 
             for (int i = 0; i < rooms.Length; i++)
@@ -576,10 +532,6 @@ public class Generator : MonoBehaviour
             }
 
             totalShift += (shiftValue - min + 1) * rooms[0].quads[0].size + 1;
-            //Debug.Log("-----------------------");
-            //Debug.Log("current Y " + currentCol);
-            //Debug.Log("SHIFTVALUE " + shiftValue);
-            //Debug.Log("TOTALSHIFT " + totalShift);
             min = 0;
 
             for (int i = 0; i < rooms.Length; i++)
@@ -601,44 +553,13 @@ public class Generator : MonoBehaviour
         settings.rulesNumber = (int)(roomMean * sizeMean);
     }
 
-
-    public void OnDrawGizmos()
+    public void resetTiles()
     {
         if (bestGraph == null)
             return;
-        bool[][] matrix;
 
-        matrix = bestGraph.matrix;
-
-        Room[] rooms = bestGraph.rooms;
-
-        //Color[] colors = new Color[] { Color.white, Color.blue, Color.red, Color.green, Color.cyan, Color.yellow, Color.magenta };
-        Gizmos.color = Color.green;
-
-        for (int j = 0; j < rooms.Length; j++)
-        {
-            if (j == 0)
-                Gizmos.color = Color.blue;
-            else if (j == bestGraph.lastRoomId)
-                Gizmos.color = Color.red;
-            else
-                Gizmos.color = Color.clear;
-
-            Gizmos.DrawCube(rooms[j].quads[0].pivot, Vector3.one * 3f);
-
-            // Draw rooms
-            //for (int i = 0; i < rooms[j].vertices.Count - 1; i++)
-            //    Gizmos.DrawLine(rooms[j].vertices[i], rooms[j].vertices[i + 1]);
-            //Gizmos.DrawLine(rooms[j].vertices[rooms[j].vertices.Count - 1], rooms[j].vertices[0]);
-            //Gizmos.color = colors[bestGraph.distances[rooms[j].id] % 7];
-        }
-
-        //Gizmos.color = Color.white;
-
-        //for (int i = 0; i < rooms.Length; i++)
-        //    for (int j = 0; j < rooms.Length; j++)
-        //        if (matrix[i][j])
-        //            Gizmos.DrawLine(rooms[i].quads[0].pivot, rooms[j].quads[0].pivot);
-
+        ts.resetTile();
     }
+
+
 }

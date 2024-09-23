@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class DataLogger
 {
-    public static void log(GenerationSettings settings, MapData m, FitnessData f, int mutations, float time, int generations, List<float> bestFitnessCurve, List<float> averageFitnessCurve)
+    public static void log(string filename, GenerationSettings settings, MapData m, FitnessData f, int mutations, float time, int generations, List<float> bestFitnessCurve, List<float> averageFitnessCurve)
     {
         List<Log> logs;
-        if (File.Exists(Path.Combine(Application.persistentDataPath, "logfile.json"))) {
+        if (File.Exists(Path.Combine(Application.persistentDataPath, filename))) {
             string jsonToLoad = File.ReadAllText(Path.Combine(Application.persistentDataPath, "logfile.json"));
             logs = new List<Log>(JsonHelper.FromJson<Log>(jsonToLoad));
         }

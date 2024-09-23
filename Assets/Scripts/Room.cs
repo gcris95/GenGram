@@ -613,28 +613,12 @@ public class Room
 
     public void show(Graph g, TileSetting ts)
     {
-        GameObject room = new GameObject("Room " + id);
-        RoomInfoDisplay r = room.AddComponent<RoomInfoDisplay>();
-
-        r.id = id;
-        r.width = width;
-        r.height = height;
-        r.hwRatio = height / width;
-
-        r.connections = g.getConnections(id).Count;
-        r.area = area;
-        r.x = x; r.y = y;
-
-        r.minX = minX; r.maxX = maxX;
-        r.minY = minY; r.maxY = maxY;
-
         setTiles();
 
         for(int i = 0; i < quadsCount; i++)
         {
             quads[i].shift(position);
             ts.setTiles(quads[i].pivot, quads[i].tileType);
-            quads[i].show(room);
         }
     }
 

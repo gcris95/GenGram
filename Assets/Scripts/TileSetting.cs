@@ -447,4 +447,11 @@ public class TileSetting : MonoBehaviour
             collTilemap.SetTile(cellPosition, null);
         }
     }
+
+    public void resetTile()
+    {
+        tilemap.ClearAllTiles();
+        collTilemap.ClearAllTiles();
+        doorTilemap.ClearAllTiles();
+    }
 }

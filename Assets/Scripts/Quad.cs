@@ -44,20 +44,6 @@ public class Quad
         pivot += new Vector2(x * size, y * size) + shiftAmount;
     }
 
-    public void show(GameObject room)
-    {
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        go.transform.position = pivot;
-        go.transform.localScale = Vector2.one * size;
-        go.transform.parent = room.transform;
-
-        QuadMono qm = go.AddComponent<QuadMono>();
-
-        qm.x = x;
-        qm.y = y;
-        qm.tile = (int)tileType;
-    }
-
     public Quad addUpNeighbour(Quad newQ)
     {
         if (up == null)
