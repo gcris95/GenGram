@@ -8,8 +8,10 @@ public class DataLogger
     public static void log(string filename, GenerationSettings settings, MapData m, FitnessData f, int mutations, float time, int generations, List<float> bestFitnessCurve, List<float> averageFitnessCurve)
     {
         List<Log> logs;
+        //File.OpenRead(filename);
         if (File.Exists(Path.Combine(Application.persistentDataPath, filename))) {
-            string jsonToLoad = File.ReadAllText(Path.Combine(Application.persistentDataPath, "logfile.json"));
+            string jsonToLoad = File.ReadAllText(Path.Combine(Application.persistentDataPath, filename));
+            Debug.Log("Esiste");
             logs = new List<Log>(JsonHelper.FromJson<Log>(jsonToLoad));
         }
         else
@@ -19,12 +21,7 @@ public class DataLogger
         logs.Add(log);
         string json = JsonHelper.ToJson(logs.ToArray(), true);
 
-        File.WriteAllText(Path.Combine(Application.persistentDataPath, "logfile.json"), json);
-
-        //for (int i = 0; i < loadListData.Count; i++) 
-        //{ 
-        //    Debug.Log("Got: " + loadListData[i].name); 
-        //} 
+        File.WriteAllText(Path.Combine(Application.persistentDataPath, filename), json);
 
         Debug.Log(Application.persistentDataPath);
     }

@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,11 +10,11 @@ public class CameraMovement : MonoBehaviour
     Vector3 difference;
     public Camera myCamera;
     bool isDragging;
-    
+
 
     public void onDrag(InputAction.CallbackContext ctx)
     {
-        if(ctx.started)        
+        if (ctx.started)
             origin = GetMousePosition();
         isDragging = ctx.started || ctx.performed;
     }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +37,7 @@ public class UIManager : MonoBehaviour
     public GameObject showMap;
     public GameObject settingCanvas;
     public GameObject showCanvas;
+    public GameObject generating;
 
     public TMP_Text totalFitness;
     public TMP_Text countFitness;
@@ -79,6 +78,7 @@ public class UIManager : MonoBehaviour
     public void generate()
     {
         showMap.SetActive(false);
+        generating.SetActive(true);
         settings.fitnessThreshold = float.Parse(fitness.text);
         settings.populationSize = Int32.Parse(population.text);
         settings.tournamentSize = Int32.Parse(tournament.text);
@@ -111,6 +111,7 @@ public class UIManager : MonoBehaviour
     public void finished()
     {
         showMap.SetActive(true);
+        generating.SetActive(false);
     }
 
     public void show()

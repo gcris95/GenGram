@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Chromosome
 {
@@ -86,59 +83,60 @@ public class Chromosome
         //Debug.Log("--------------MUTATION--------------");
         //Debug.Log("Cromosoma prima della mutation: " + string.Join(", ", genes));
 
-        if (Random.Range(0, 100) < mutationRate)
-        {
-            genes[0] = Random.Range(0, 2);
-            mutations++;
-        }
-        if (Random.Range(0, 100) < mutationRate)
-        {
-            genes[1] = Random.Range(0, 2);
-            mutations++;
-        }
-        if (Random.Range(0, 100) < mutationRate)
-        {
-            genes[2] = Random.Range(0, 2);
-            mutations++;
-        }
-        if (Random.Range(0, 100) < mutationRate)
-        {
-            genes[3] = Random.Range(0, 2);
-            mutations++;
-        }
+        //if (Random.Range(0, 100) < mutationRate)
+        //{
+        //    genes[0] = Random.Range(0, 2);
+        //    mutations++;
+        //}
+        //if (Random.Range(0, 100) < mutationRate)
+        //{
+        //    genes[1] = Random.Range(0, 2);
+        //    mutations++;
+        //}
+        //if (Random.Range(0, 100) < mutationRate)
+        //{
+        //    genes[2] = Random.Range(0, 2);
+        //    mutations++;
+        //}
+        //if (Random.Range(0, 100) < mutationRate)
+        //{
+        //    genes[3] = Random.Range(0, 2);
+        //    mutations++;
+        //}
 
+        System.Random rand = new System.Random();
         for (int i = 4; i < genes.Length; i += 6)
-        {
-            if (Random.Range(0, 100) < mutationRate)
+        {           
+            if (rand.Next(0, 100) < mutationRate)
             {
-                genes[i] = Random.Range(0, 6);
+                genes[i] = rand.Next(0, 6);
                 mutations++;
             }
-            if (Random.Range(0, 100) < mutationRate)
-            {
-                genes[i + 1] = Random.Range(0, 4);
-                mutations++;
-            }
-            if (Random.Range(0, 100) < mutationRate)
-            {
-                genes[i + 2] = Random.Range(0, 2);
-                mutations++;
-            }
-            if (Random.Range(0, 100) < mutationRate)
-            {
-                genes[i + 3] = Random.Range(0, 2);
-                mutations++;
-            }
-            if (Random.Range(0, 100) < mutationRate)
-            {
-                genes[i + 4] = Random.Range(0, 2);
-                mutations++;
-            }
-            if (Random.Range(0, 100) < mutationRate)
-            {
-                genes[i + 5] = Random.Range(0, 2);
-                mutations++;
-            }
+            //if (Random.Range(0, 100) < mutationRate)
+            //{
+            //    genes[i + 1] = Random.Range(0, 4);
+            //    mutations++;
+            //}
+            //if (Random.Range(0, 100) < mutationRate)
+            //{
+            //    genes[i + 2] = Random.Range(0, 2);
+            //    mutations++;
+            //}
+            //if (Random.Range(0, 100) < mutationRate)
+            //{
+            //    genes[i + 3] = Random.Range(0, 2);
+            //    mutations++;
+            //}
+            //if (Random.Range(0, 100) < mutationRate)
+            //{
+            //    genes[i + 4] = Random.Range(0, 2);
+            //    mutations++;
+            //}
+            //if (Random.Range(0, 100) < mutationRate)
+            //{
+            //    genes[i + 5] = Random.Range(0, 2);
+            //    mutations++;
+            //}
         }
 
         //Debug.Log("Cromosoma dopo la mutation: " + string.Join(", ", genes));
@@ -151,7 +149,7 @@ public class Chromosome
 
         if (settings.checkDistance)
         {
-            checkDistance(settings,g);
+            checkDistance(settings, g);
         }
 
         if (settings.checkRoomsSize)
@@ -171,7 +169,7 @@ public class Chromosome
 
         if (settings.checkHeightRatio)
         {
-            checkHeightRatio(settings,rooms);
+            checkHeightRatio(settings, rooms);
         }
 
         if (settings.checkBottlenecks)
@@ -248,7 +246,10 @@ public class Chromosome
         for (int i = 0; i < rooms.Length; i++)
         {
             averageSize += rooms[i].quadsCount;
-            malus += Mathf.Max(Mathf.Abs(rooms[i].quadsCount - mean) - diff, 0);
+            
+            malus += Mathf.Max(Mathf.Abs(rooms[i].quadsCount - mean) - diff, 0)/4;
+            if (rooms[i].quadsCount == 1)
+                malus *= 2;
         }
 
         malus /= rooms.Length;
@@ -321,7 +322,7 @@ public class Chromosome
                 right = r.quads[i].right != null;
 
                 if (((up || down) && (!left && !right)) || ((left || right) && (!up && !down)))
-                    malus += 1.5f;
+                    malus += 0.33f;
             }
         }
         bottleneckFitness = 1 / (malus + 1);

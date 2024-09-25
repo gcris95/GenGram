@@ -1,4 +1,3 @@
-using GD.MinMaxSlider;
 using System;
 using UnityEngine;
 
@@ -40,13 +39,13 @@ public class GenerationSettings : ScriptableObject
     public bool checkBottlenecks = true;
 
     [Header("Rooms Number")]
-    [MinMaxSlider(2, 100)]
+    //[MinMaxSlider(2, 100)]
     public Vector2Int roomsNumber = new Vector2Int(7, 15);
     [Header("Rooms size")]
-    [MinMaxSlider(1, 100)]
+    //[MinMaxSlider(1, 100)]
     public Vector2Int quadPerRoom = new Vector2Int(2, 6);
     [Header("First Room-Last Room distance")]
-    [MinMaxSlider(1,100)]
+    //[MinMaxSlider(1,100)]
     public Vector2Int firstLastDistance = new Vector2Int(1, 10);
     [Header("Rooms distribution")]
     [Tooltip("Toggle this if the cover percentage of the grid must be considered as a minimum, as a maximum otherwise")]
